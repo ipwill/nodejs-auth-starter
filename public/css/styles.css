@@ -3,11 +3,14 @@
     --primary-color: #2a2a72;
     --background-color: #f0f0f5;
     --surface-color: #ffffff;
-    --text-color: #2d2d2d;
-    --text-secondary: #7a7a7a;
-    --accent-color: #556cd6;
+    --text-color: #1f2328;
+    --text-secondary: #59636e;
+    --text-link: #0969da;
+    --button-bg: #3E8C3E;
+    --button-bg-hover: #449E44;
+    --accent-color: #1a7f37;
     --accent-hover: #334ac0;
-    --danger-color: #d64545;
+    --danger-color: #d1242f;
     --border-color: #d1d1d1;
     --grid-item-hover: #f8f9fc;
     --font-size-sm: 12px;
@@ -24,7 +27,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
     font-size: var(--font-size-base);
     color: var(--text-color);
     background-color: var(--background-color);
@@ -80,6 +83,12 @@ label {
     gap: var(--spacing-xs);
 }
 
+svg {
+    margin-right: var(--spacing-sm);
+    text-align: right;
+    margin-left: var(--spacing-sm);
+}
+
 input[type="text"], input[type="email"], input[type="password"], select {
     width: 100%;
     padding: var(--spacing-sm);
@@ -118,7 +127,7 @@ button {
     font-size: var(--font-size-sm);
     font-weight: 500;
     color: white;
-    background: var(--accent-color);
+    background: var(--button-bg);
     border: none;
     border-radius: var(--border-radius);
     cursor: pointer;
@@ -131,7 +140,7 @@ button {
 }
 
 button:hover {
-    background: var(--accent-hover);
+    background: var(--button-bg-hover);
 }
 
 button:disabled {
@@ -170,11 +179,11 @@ button.loading .button-content {
 .link {
     text-align: center;
     font-size: var(--font-size-sm);
-    color: var(--text-secondary);
+    color: var(--text-link);
 }
 
 .link a {
-    color: var(--accent-color);
+    color: var(--text-link);
     text-decoration: none;
     font-weight: 500;
     transition: var(--transition);
@@ -184,9 +193,27 @@ button.loading .button-content {
     text-decoration: underline;
 }
 
+.font-second {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.font-second a {
+    color: var(--text-link);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.font-second a:hover {
+    text-decoration: underline;
+}
+
 #password-requirements {
     font-size: var(--font-size-sm);
     color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
 }
 
 #password-requirements p {
