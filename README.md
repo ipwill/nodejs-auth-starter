@@ -28,13 +28,18 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
    ```env
    PORT=3000
    NODE_ENV=development
-   JWT_SECRET=s3cUr3R@nd0m$tr1ng
-   SMTP_HOST=smtp.example.com
-   SMTP_PORT=587
-   SMTP_SECURE=false
-   SMTP_USER=your_email@example.com
-   SMTP_PASS=your_email_password
+   JWT_SECRET=secret_phrase
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=465
+   SMTP_SECURE=true
+   SMTP_USER=your_email@gmail.com
+   SMTP_PASS=YourEmailPassword!
    DB_PATH=./database.db
+   ALLOWED_ORIGINS=http://localhost:3000,https://yourdomain.com
+   ALLOWED_HOSTS=localhost:3000,yourdomain.com
+   ENCRYPTION_KEY=
+   ENCRYPTION_IV=
+   CSRF_SECRET=
    ```
 
 4. Build the app:
