@@ -1,3 +1,4 @@
+/* styles.css */
 :root {
     --primary-color: #2a2a72;
     --background-color: #f0f0f5;
@@ -8,6 +9,7 @@
     --accent-hover: #334ac0;
     --danger-color: #d64545;
     --border-color: #d1d1d1;
+    --grid-item-hover: #f8f9fc;
     --font-size-sm: 12px;
     --font-size-base: 13px;
     --font-size-lg: 15px;
@@ -28,13 +30,14 @@ body {
     background-color: var(--background-color);
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 .container {
     width: 90%;
     max-width: 400px;
     margin: auto;
-    margin-top: 10vh;
+    margin-top: 5vh;
     padding: var(--spacing-md);
     background: var(--surface-color);
     border-radius: var(--border-radius);
@@ -42,6 +45,7 @@ body {
     display: grid;
     grid-template-rows: auto;
     gap: var(--spacing-lg);
+    box-sizing: border-box;
 }
 
 h2 {
@@ -76,7 +80,7 @@ label {
     gap: var(--spacing-xs);
 }
 
-input[type="text"], input[type="password"], select {
+input[type="text"], input[type="email"], input[type="password"], select {
     width: 100%;
     padding: var(--spacing-sm);
     font-size: var(--font-size-sm);
@@ -85,9 +89,10 @@ input[type="text"], input[type="password"], select {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     transition: var(--transition);
+    box-sizing: border-box;
 }
 
-input[type="text"]:focus, input[type="password"]:focus, select:focus {
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus, select:focus {
     outline: none;
     border-color: var(--accent-color);
     box-shadow: 0 0 0 2px rgba(85, 108, 214, 0.2);
@@ -177,6 +182,35 @@ button.loading .button-content {
 
 .link a:hover {
     text-decoration: underline;
+}
+
+#password-requirements {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+#password-requirements p {
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+#password-requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#password-requirements li {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+#password-requirements li.valid {
+    color: green;
+}
+
+#password-requirements li.invalid {
+    color: red;
 }
 
 .hidden {

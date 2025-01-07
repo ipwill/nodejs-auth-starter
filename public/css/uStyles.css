@@ -1,3 +1,4 @@
+/* uStyles.css */
 :root {
     --primary-color: #2a2a72;
     --background-color: #f0f0f5;
@@ -47,6 +48,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     padding: var(--spacing-sm);
+    box-sizing: border-box;
 }
 
 .header {
@@ -90,22 +92,6 @@ body {
     border-radius: var(--border-radius);
 }
 
-.notification-badge {
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    background: var(--danger-color);
-    color: white;
-    font-size: var(--font-size-sm);
-    padding: 1px 4px;
-    border-radius: 50%;
-    min-width: 12px;
-    height: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 .logout-button {
     padding: var(--spacing-xs) var(--spacing-sm);
     background: transparent;
@@ -114,6 +100,9 @@ body {
     font-size: var(--font-size-sm);
     border-radius: var(--border-radius);
     transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
 }
 
 .logout-button:hover {
@@ -121,96 +110,63 @@ body {
     border-color: var(--accent-color);
 }
 
-.grid {
-    padding: var(--spacing-sm);
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--spacing-sm);
-    overflow-y: auto;
-}
-
-.grid-item {
+.dashboard-table {
+    width: 100%;
+    border-collapse: collapse;
     background: var(--surface-color);
     border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-sm);
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--spacing-xs);
-    text-align: center;
     font-size: var(--font-size-sm);
-}
-
-.grid-item:hover {
-    background: var(--grid-item-hover);
-    border-color: var(--accent-color);
-}
-
-.grid-icon {
-    font-size: 20px;
-    color: var(--accent-color);
-}
-
-.grid-item h3 {
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-    margin-bottom: 2px;
     color: var(--text-color);
 }
 
-.grid-item p {
-    font-size: var(--font-size-sm);
-    color: var(--text-secondary);
-    margin: 0;
+.dashboard-table th,
+.dashboard-table td {
+    text-align: left;
+    padding: 8px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.grid-item.empty {
-    border-style: dashed;
-    opacity: 0.7;
+.dashboard-table th {
+    font-weight: 600;
+    background: var(--grid-item-hover);
 }
 
-.grid-item.empty:hover {
-    opacity: 1;
+.dashboard-table td {
+    font-weight: 400;
 }
 
-.footer {
-    padding: var(--spacing-xs) var(--spacing-md);
-    border-top: 1px solid var(--border-color);
-    background: var(--surface-color);
+.button {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--accent-color);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    display: inline-block;
 }
 
-.footer-content {
+.button:hover {
+    background: var(--accent-hover);
+}
+
+.status-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: var(--spacing-xs) var(--spacing-md);
     font-size: var(--font-size-sm);
+    background: var(--surface-color);
+    border-top: 1px solid var(--border-color);
     color: var(--text-secondary);
-    gap: var(--spacing-xs);
 }
 
-.footer-links {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-}
-
-.footer-links a {
-    color: var(--text-secondary);
+.status-bar a {
+    color: var(--accent-color);
     text-decoration: none;
-    font-weight: 500;
-    transition: var(--transition);
-    font-size: var(--font-size-sm);
 }
 
-.footer-links a:hover {
-    color: var(--text-color);
-}
-
-.separator {
-    color: var(--border-color);
+.status-bar a:hover {
+    text-decoration: underline;
 }
 
 ::-webkit-scrollbar {
@@ -221,15 +177,6 @@ body {
     background: transparent;
 }
 
-::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--text-secondary);
-}
-
 @media (max-width: 768px) {
     .dashboard {
         width: 100%;
@@ -238,12 +185,15 @@ body {
         padding: var(--spacing-xs);
     }
 
-    .grid {
-        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    }
-
-    .footer-content {
+    .status-bar {
         flex-direction: column;
         text-align: center;
+        gap: var(--spacing-xs);
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
     }
 }

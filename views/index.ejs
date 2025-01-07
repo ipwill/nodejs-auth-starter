@@ -1,113 +1,127 @@
-<!-- views/index.ejs -->
+<!-- index.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <meta name="description" content="Login and Registration">
- <title>Login | My App</title>
- <link rel="preconnect" href="https://fonts.googleapis.com">
- <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
- <link rel="stylesheet" href="/css/all.min.css">
- <link rel="stylesheet" href="/css/styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="<%= csrfToken %>">
+  <meta name="description" content="User Dashboard">
+  <title>Dashboard | My App</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
- <div class="container">
-   <div id="register-form" class="form-section">
-     <h2>Register</h2>
-     <div class="form-group">
-       <label for="username"><i class="fas fa-user"></i> Username</label>
-       <input type="text" id="username" placeholder="Enter your username" autocomplete="username">
-     </div>
-     <div class="form-group">
-       <label for="password"><i class="fas fa-lock"></i> Password</label>
-       <input type="password" id="password" placeholder="Enter your password" autocomplete="new-password">
-     </div>
-     <div class="form-group">
-       <label for="2fa-method"><i class="fas fa-shield-alt"></i> 2FA Method</label>
-       <select id="2fa-method">
-         <option value="totp">Authenticator App</option>
-         <option value="email">Email</option>
-       </select>
-     </div>
-     <div class="checkbox-group">
-       <input type="checkbox" id="bypass-2fa-register">
-       <label for="bypass-2fa-register">Bypass 2FA</label>
-     </div>
-     <button id="register-button">
-       <span class="button-content">
-         <i class="fas fa-user-plus"></i> Register
-       </span>
-       <span class="button-spinner hidden">
-         <i class="fas fa-circle-notch fa-spin"></i>  
-       </span>
-     </button>
-     <p class="error" id="register-error"></p>
-     <p class="link">Already have an account? <a href="#" id="show-login">Login</a></p>
-   </div>
+  <div class="container">
+    <div id="register-form" class="form-section">
+      <h2>Register</h2>
+      <div class="form-group">
+        <label for="username"><i class="fas fa-user"></i> Username</label>
+        <input type="text" id="username" placeholder="Enter your username" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="email"><i class="fas fa-envelope"></i> Email</label>
+        <input type="email" id="email" placeholder="Enter your email" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="password"><i class="fas fa-lock"></i> Password</label>
+        <input type="password" id="password" placeholder="Enter your password" autocomplete="new-password">
+      </div>
+      <div id="password-requirements">
+        <p>Password must contain:</p>
+        <ul>
+          <li id="length" class="invalid">At least 8 characters</li>
+          <li id="uppercase" class="invalid">At least one uppercase letter</li>
+          <li id="lowercase" class="invalid">At least one lowercase letter</li>
+          <li id="number" class="invalid">At least one number</li>
+          <li id="special" class="invalid">At least one special character (@$!%*?&)</li>
+        </ul>
+      </div>
+      <div class="form-group">
+        <label for="2fa-method"><i class="fas fa-shield-alt"></i> 2FA Method</label>
+        <select id="2fa-method">
+          <option value="totp">Authenticator App</option>
+          <option value="email">Email</option>
+        </select>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="bypass-2fa-register">
+        <label for="bypass-2fa-register">Bypass 2FA</label>
+      </div>
+      <button id="register-button">
+        <span class="button-content">
+          <i class="fas fa-user-plus"></i> Register
+        </span>
+        <span class="button-spinner hidden">
+          <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+      </button>
+      <p class="error" id="register-error"></p>
+      <p class="link">Already have an account? <a href="#" id="show-login">Login</a></p>
+    </div>
 
-   <div id="login-form" class="form-section active">
-     <h2>Login</h2>
-     <div class="form-group">
-       <label for="login-username"><i class="fas fa-user"></i> Username</label>
-       <input type="text" id="login-username" placeholder="Enter your username" autocomplete="username">
-     </div>
-     <div class="form-group">
-       <label for="login-password"><i class="fas fa-lock"></i> Password</label>
-       <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
-     </div>
-     <div class="checkbox-group">
-       <input type="checkbox" id="bypass-2fa-login">
-       <label for="bypass-2fa-login">Bypass 2FA</label>
-     </div>
-     <button id="login-button">
-       <span class="button-content">
-         <i class="fas fa-sign-in-alt"></i> Login
-       </span>
-       <span class="button-spinner hidden">
-         <i class="fas fa-circle-notch fa-spin"></i>
-       </span>
-     </button>
-     <p class="error" id="login-error"></p>
-     <p class="link">Don't have an account? <a href="#" id="show-register">Register</a></p>
-   </div>
+    <div id="login-form" class="form-section active">
+      <h2>Login</h2>
+      <div class="form-group">
+        <label for="login-username"><i class="fas fa-user"></i> Username</label>
+        <input type="text" id="login-username" placeholder="Enter your username" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="login-password"><i class="fas fa-lock"></i> Password</label>
+        <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="bypass-2fa-login">
+        <label for="bypass-2fa-login">Bypass 2FA</label>
+      </div>
+      <button id="login-button">
+        <span class="button-content">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </span>
+        <span class="button-spinner hidden">
+          <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+      </button>
+      <p class="error" id="login-error"></p>
+      <p class="link">Don't have an account? <a href="#" id="show-register">Register</a></p>
+    </div>
 
-   <div id="2fa-form" class="form-section">
-     <h2><i class="fas fa-key"></i> 2FA Verification</h2>
-     <div class="form-group" id="totp-container">
-       <label for="totp-token"><i class="fas fa-key"></i> TOTP Code</label>
-       <input type="text" id="totp-token" placeholder="Enter your TOTP code" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
-     </div>
-     <div class="form-group hidden" id="email-container">
-       <label for="email-token"><i class="fas fa-envelope"></i> Email Code</label>
-       <input type="text" id="email-token" placeholder="Enter your email code" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
-     </div>
-     <button id="verify-2fa-button">
-       <span class="button-content">
-         <i class="fas fa-check"></i> Verify
-       </span>
-       <span class="button-spinner hidden">
-         <i class="fas fa-circle-notch fa-spin"></i>
-       </span>
-     </button>
-     <p class="error" id="2fa-error"></p>
-   </div>
+    <div id="2fa-form" class="form-section">
+      <h2><i class="fas fa-key"></i> 2FA Verification</h2>
+      <div class="form-group" id="totp-container">
+        <label for="totp-token"><i class="fas fa-key"></i> TOTP Code</label>
+        <input type="text" id="totp-token" placeholder="Enter your TOTP code" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+      </div>
+      <div class="form-group hidden" id="email-container">
+        <label for="email-token"><i class="fas fa-envelope"></i> Email Code</label>
+        <input type="text" id="email-token" placeholder="Enter your email code" maxlength="6" inputmode="numeric" autocomplete="one-time-code">
+      </div>
+      <img id="qr-code" class="hidden" alt="TOTP QR Code">
+      <button id="verify-2fa-button">
+        <span class="button-content">
+          <i class="fas fa-check"></i> Verify
+        </span>
+        <span class="button-spinner hidden">
+          <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+      </button>
+      <p class="error" id="2fa-error"></p>
+    </div>
 
-   <div id="authenticated-form" class="form-section">
-     <h2><i class="fas fa-user-circle"></i> Welcome</h2>
-     <p id="user-welcome"></p>
-     <button id="logout-button">
-       <span class="button-content">
-         <i class="fas fa-sign-out-alt"></i> Logout
-       </span>
-       <span class="button-spinner hidden">
-         <i class="fas fa-circle-notch fa-spin"></i>
-       </span>
-     </button>
-   </div>
- </div>
-
- <script src="/js/bundle.js"></script>
+    <div id="authenticated-form" class="form-section">
+      <h2><i class="fas fa-user-circle"></i> Welcome</h2>
+      <p id="user-welcome"></p>
+      <button id="logout-button">
+        <span class="button-content">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </span>
+        <span class="button-spinner hidden">
+          <i class="fas fa-circle-notch fa-spin"></i>
+        </span>
+      </button>
+    </div>
+  </div>
+  <script src="/js/script.js"></script>
+  <script src="/js/bundle.js"></script>
 </body>
 </html>

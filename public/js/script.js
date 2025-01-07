@@ -1,3 +1,5 @@
+// public/js/script.js
+
 function showModal(message) {
   const modal = document.createElement('div');
   modal.className = 'modal';
@@ -30,9 +32,33 @@ function toggleSpinner(visible, buttonId = null) {
     }
   }
   
-  // Main spinner toggle (for backwards compatibility)
   const spinner = document.getElementById('loading-spinner');
   if (spinner) spinner.style.display = visible ? 'block' : 'none';
 }
 
-export { showModal, toggleSpinner };
+function validatePassword(password) {
+  const requirements = {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[@$!%*?&]/.test(password),
+  };
+
+  Object.keys(requirements).forEach(key => {
+    const element = document.getElementById(key);
+    if (element) {
+      if (requirements[key]) {
+        element.classList.remove('invalid');
+        element.classList.add('valid');
+      } else {
+        element.classList.remove('valid');
+        element.classList.add('invalid');
+      }
+    }
+  });
+
+  return Object.values(requirements).every(value => value);
+}
+
+export { showModal, toggleSpinner, validatePassword };

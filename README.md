@@ -1,5 +1,4 @@
 # Simple SPA with 2FA
-[![NodeJS with Webpack](https://github.com/cgtwig/nodejs-login-2fa/actions/workflows/webpack.yml/badge.svg)](https://github.com/cgtwig/nodejs-login-2fa/actions/workflows/webpack.yml)
 
 A minimal single-page application (SPA) for user authentication with Two-Factor Authentication (TOTP/email) built using Node.js, Express, and modern JavaScript.
 
