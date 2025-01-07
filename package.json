@@ -1,0 +1,40 @@
+{
+  "name": "simple-spa-2fa",
+  "version": "1.0.0",
+  "description": "A simple SPA with login, register, and 2FA using TOTP and email",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "serve": "webpack serve"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "bcrypt": "^5.1.1",
+    "better-sqlite3": "^8.7.0",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.16",
+    "speakeasy": "^2.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.0",
+    "babel-loader": "^9.2.1",
+    "nodemon": "^3.1.9",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "",
+  "license": "MIT"
+}

@@ -1,0 +1,197 @@
+:root {
+    --primary-color: #2a2a72;
+    --background-color: #f0f0f5;
+    --surface-color: #ffffff;
+    --text-color: #2d2d2d;
+    --text-secondary: #7a7a7a;
+    --accent-color: #556cd6;
+    --accent-hover: #334ac0;
+    --danger-color: #d64545;
+    --border-color: #d1d1d1;
+    --font-size-sm: 12px;
+    --font-size-base: 13px;
+    --font-size-lg: 15px;
+    --font-size-xl: 18px;
+    --spacing-xs: 2px;
+    --spacing-sm: 4px;
+    --spacing-md: 8px;
+    --spacing-lg: 16px;
+    --border-radius: 4px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    --transition: all 0.2s ease;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: var(--font-size-base);
+    color: var(--text-color);
+    background-color: var(--background-color);
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 400px;
+    margin: auto;
+    margin-top: 10vh;
+    padding: var(--spacing-md);
+    background: var(--surface-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    display: grid;
+    grid-template-rows: auto;
+    gap: var(--spacing-lg);
+}
+
+h2 {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+}
+
+.form-section {
+    display: none;
+}
+
+.form-section.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: var(--spacing-xs);
+}
+
+label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+input[type="text"], input[type="password"], select {
+    width: 100%;
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-color);
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+input[type="text"]:focus, input[type="password"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(85, 108, 214, 0.2);
+}
+
+select {
+    appearance: none;
+    cursor: pointer;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+button {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: white;
+    background: var(--accent-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    transition: var(--transition);
+    position: relative;
+}
+
+button:hover {
+    background: var(--accent-hover);
+}
+
+button:disabled {
+    background: var(--border-color);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.button-content {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.button-spinner {
+    position: absolute;
+    right: var(--spacing-xs);
+    display: none;
+}
+
+button.loading .button-spinner {
+    display: flex;
+}
+
+button.loading .button-content {
+    visibility: hidden;
+}
+
+.error {
+    font-size: var(--font-size-sm);
+    color: var(--danger-color);
+    margin-top: var(--spacing-xs);
+    text-align: center;
+}
+
+.link {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.link a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.link a:hover {
+    text-decoration: underline;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 100%;
+        margin: 0;
+        padding: var(--spacing-md);
+        border-radius: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}

@@ -1,0 +1,102 @@
+<!-- views/user-dashboard.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <meta name="description" content="User Dashboard">
+ <title>Dashboard | My App</title>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="/css/all.min.css">
+ <link rel="stylesheet" href="/css/uStyles.css">
+</head>
+<body>
+ <div class="dashboard">
+   <div class="header">
+     <div class="welcome">
+       <i class="fas fa-user-circle"></i>
+       <span>Welcome, <%= username %>!</span>
+     </div>
+     <div class="header-actions">
+       <button id="notification-button" class="icon-button" aria-label="Notifications">
+         <i class="fas fa-bell"></i>
+         <span class="notification-badge hidden">0</span>
+       </button>
+       <button id="settings-button" class="icon-button" aria-label="Settings">
+         <i class="fas fa-cog"></i>
+       </button>
+       <button id="logout-button" class="logout-button">
+         <span class="button-content">
+           <i class="fas fa-sign-out-alt"></i> Logout
+         </span>
+         <span class="button-spinner hidden">
+           <i class="fas fa-circle-notch fa-spin"></i>
+         </span>
+       </button>
+     </div>
+   </div>
+
+   <div class="grid">
+     <div class="grid-item">
+       <div class="grid-item-content">
+         <i class="fas fa-chart-line grid-icon"></i>
+         <h3>Analytics</h3>
+         <p>View your activity stats</p>
+       </div>
+     </div>
+     <div class="grid-item">
+       <div class="grid-item-content">
+         <i class="fas fa-tasks grid-icon"></i>
+         <h3>Tasks</h3>
+         <p>Manage your tasks</p>
+       </div>
+     </div>
+     <div class="grid-item">
+       <div class="grid-item-content">
+         <i class="fas fa-folder grid-icon"></i>
+         <h3>Projects</h3>
+         <p>View your projects</p>
+       </div>
+     </div>
+     <div class="grid-item empty">
+       <div class="grid-item-content">
+         <i class="fas fa-plus grid-icon"></i>
+         <h3>Add Widget</h3>
+         <p>Customize your dashboard</p>
+       </div>
+     </div>
+     <div class="grid-item empty">
+       <div class="grid-item-content">
+         <i class="fas fa-plus grid-icon"></i>
+         <h3>Add Widget</h3>
+         <p>Customize your dashboard</p>
+       </div>
+     </div>
+     <div class="grid-item empty">
+       <div class="grid-item-content">
+         <i class="fas fa-plus grid-icon"></i>
+         <h3>Add Widget</h3>
+         <p>Customize your dashboard</p>
+       </div>
+     </div>
+   </div>
+
+   <div class="footer">
+     <div class="footer-content">
+       <p>© <%= new Date().getFullYear() %> My App. All rights reserved.</p>
+       <div class="footer-links">
+         <a href="#">Privacy Policy</a>
+         <span class="separator">•</span>
+         <a href="#">Terms of Service</a>
+         <span class="separator">•</span>
+         <a href="#">Help</a>
+       </div>
+     </div>
+   </div>
+ </div>
+
+ <script type="module" src="/js/uDashboard.js"></script>
+</body>
+</html>
