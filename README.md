@@ -58,17 +58,19 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
    ```
    Open the MailHog web UI at [http://127.0.0.1:8025](http://127.0.0.1:8025).
 
+   ![mailhog-screenshot](images/mailhog-test-ss.png)
+
    **Without Docker:**
    - Download the appropriate MailHog binary from [MailHog Releases](https://github.com/mailhog/MailHog/releases).
    - Run the binary (by default, MailHog listens on SMTP port 1025 and serves the UI on port 8025).
 
-5. **Build the client-side bundle:**
+6. **Build the client-side bundle:**
    ```bash
    npm run build
    ```
    This uses Webpack (configured in `webpack.config.cjs`) to bundle your code from `src/app.js` (which imports from `public/js/script.js`) into `public/js/bundle.js`.
 
-6. **Start the server:**
+7. **Start the server:**
    ```bash
    npm start
    ```
