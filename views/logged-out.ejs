@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Logged Out">
+  <title>Logged Out - Developer Mode</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+  <div class="logged-out-container developer">
+    <h2>Session terminated</h2>
+    <% if (reason==='expired' ) { %>
+      <p>Your session expired or you logged out. Reboot your login.</p>
+      <% } else { %>
+        <p>Error: Not currently logged in.</p>
+        <% } %>
+          <a href="/">Start over</a>
+  </div>
+</body>
+
+</html>
