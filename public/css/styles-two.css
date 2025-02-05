@@ -1,27 +1,35 @@
-/* uStyles.css */
 :root {
-    --primary-color: #2a2a72;
-    --background-color: #f0f0f5;
+    --primary-color: #24292e;
+    --background-color: #f6f8fa;
     --surface-color: #ffffff;
-    --text-color: #1f2328;
-    --text-secondary: #59636e;
-    --text-link: #0969da;
-    --accent-color: #1a7f37;
-    --accent-hover: #334ac0;
-    --danger-color: #d1242f;
-    --border-color: #d1d1d1;
+    --text-color: #24292e;
+    --text-secondary: #57606a;
+    --text-link: #0366d6;
+    --accent-color: #0366d6;
+    --accent-hover: #0356b6;
+    --danger-color: #d73a49;
+    --border-color: #d1d5da;
     --grid-item-hover: #f8f9fc;
     --font-size-sm: 12px;
     --font-size-base: 13px;
     --font-size-lg: 15px;
-    --font-size-xl: 18px;
-    --spacing-xs: 2px;
-    --spacing-sm: 4px;
-    --spacing-md: 8px;
+    --font-size-xl: 16px;
+    --page-spacing-xs: 15px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
     --spacing-lg: 16px;
-    --border-radius: 4px;
-    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    --border-radius: 6px;
+    --box-shadow: 0 1px 2px rgba(27, 31, 35, 0.15);
     --transition: all 0.2s ease;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
 body {
@@ -31,6 +39,7 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background: var(--surface-color);
 }
 
 .dashboard {
@@ -138,7 +147,7 @@ body {
 .button {
     padding: var(--spacing-xs) var(--spacing-sm);
     background: var(--accent-color);
-    color: white;
+    color: #fff;
     text-decoration: none;
     border-radius: var(--border-radius);
     transition: var(--transition);
@@ -147,6 +156,10 @@ body {
 
 .button:hover {
     background: var(--accent-hover);
+}
+
+.settingsUI {
+    display: none;
 }
 
 .status-bar {
@@ -177,12 +190,109 @@ body {
     background: transparent;
 }
 
+.settings-table {
+    margin: var(--spacing-lg) 0;
+    width: 100%;
+}
+
+.settings-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.settings-table td {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.settings-table tr:last-child td {
+    border-bottom: none;
+}
+
+.setting-label {
+    font-weight: 600;
+    color: var(--text-color);
+    width: 40%;
+}
+
+.setting-value {
+    color: var(--text-secondary);
+}
+
+.setting-value.editable {
+    cursor: pointer;
+}
+
+.setting-value.readonly {
+    background: var(--surface-color);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+
+.edit-input {
+    width: 100%;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--accent-color);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-base);
+    transition: var(--transition);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-switch label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--border-color);
+    transition: var(--transition);
+    border-radius: 24px;
+}
+
+.toggle-switch label:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background: #fff;
+    transition: var(--transition);
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked+label {
+    background: var(--accent-color);
+}
+
+.toggle-switch input:checked+label:before {
+    transform: translateX(20px);
+}
+
 @media (max-width: 768px) {
     .dashboard {
         width: 100%;
         height: 100%;
         border-radius: 0;
-        padding: var(--spacing-xs);
+        padding: var(--page-spacing-xs);
     }
 
     .status-bar {
@@ -193,7 +303,32 @@ body {
 
     .header {
         flex-direction: column;
-        align-items: flex-start;
         gap: var(--spacing-xs);
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard {
+        width: 100%;
+        height: 100%;
+        padding: var(--spacing-md);
+        overflow-y: auto;
+    }
+
+    .header,
+    .status-bar {
+        padding: var(--spacing-xs);
+    }
+
+    .dashboard-table th,
+    .dashboard-table td {
+        padding: 4px;
+        font-size: var(--font-size-sm);
+    }
+
+    .button {
+        padding: var(--spacing-xs);
+        font-size: var(--font-size-sm);
     }
 }
