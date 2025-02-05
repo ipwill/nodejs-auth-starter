@@ -1,4 +1,3 @@
-// src/app.js
 import axios from 'axios';
 import { showModal, toggleSpinner, validatePassword } from '../public/js/script.js';
 
@@ -15,7 +14,7 @@ const authStorage = {
   get() {
     return {
       token: localStorage.getItem('authToken'),
-      username: localStorage.getItem('username'),
+      username: localStorage.getItem('username')
     };
   },
   getTempUsername() {
@@ -23,7 +22,7 @@ const authStorage = {
   },
   setTempUsername(username) {
     localStorage.setItem('tempUsername', username);
-  },
+  }
 };
 
 const formManager = {
@@ -33,33 +32,60 @@ const formManager = {
   show(formId) {
     this.hideAll();
     const form = document.getElementById(formId);
-    if (form) {
-      form.classList.add('active');
-    }
+    if (form) form.classList.add('active');
   },
-  show2FA(method) {
+  show2FA() {
     this.show('2fa-form');
-    const totp = document.getElementById('totp-container');
-    const email = document.getElementById('email-container');
-    if (method === 'totp') {
-      totp.classList.remove('hidden');
-      email.classList.add('hidden');
-    } else {
-      totp.classList.add('hidden');
-      email.classList.remove('hidden');
-    }
-  },
+    const emailContainer = document.getElementById('email-container');
+    if (emailContainer) emailContainer.classList.remove('hidden');
+    startTimer();
+  }
 };
 
 const api = axios.create({
   baseURL: '/api/',
+  withCredentials: true
 });
 
-const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
+const csrfMetaTag = document.querySelector('meta[name="csrf-token"]');
+const csrfToken = csrfMetaTag ? csrfMetaTag.getAttribute('content') : '';
 api.defaults.headers.post['X-CSRF-Token'] = csrfToken;
 api.defaults.headers.put['X-CSRF-Token'] = csrfToken;
 api.defaults.headers.delete['X-CSRF-Token'] = csrfToken;
+
+let timerInterval;
+function startTimer() {
+  const timerDisplay = document.getElementById('timer');
+  const resendButton = document.getElementById('resend-button');
+  let timeLeft = 90;
+  timerDisplay.textContent = timeLeft;
+  resendButton.style.display = 'none';
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    timerDisplay.textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      timerDisplay.textContent = '0';
+      resendButton.style.display = 'inline-block';
+    }
+  }, 1000);
+}
+
+async function resend2FACode() {
+  const username = authStorage.getTempUsername();
+  if (!username) return;
+  try {
+    toggleSpinner(true, 'verify-2fa-button');
+    await api.post('resend-2fa', { username });
+    startTimer();
+    document.getElementById('2fa-error').textContent = 'A new code has been sent to your email.';
+  } catch (err) {
+    document.getElementById('2fa-error').textContent = err.response?.data?.message || 'Resending code failed.';
+  } finally {
+    toggleSpinner(false, 'verify-2fa-button');
+  }
+}
 
 const handlers = {
   async registerHandler(event) {
@@ -67,11 +93,8 @@ const handlers = {
     const username = document.getElementById('username').value.trim();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
-    const twoFactorMethod = document.getElementById('2fa-method').value;
-    const bypass2FA = document.getElementById('bypass-2fa-register').checked;
     const errorElement = document.getElementById('register-error');
     errorElement.textContent = '';
-
     if (!username || !email || !password) {
       errorElement.textContent = 'Please fill in all fields.';
       return;
@@ -80,23 +103,15 @@ const handlers = {
       errorElement.textContent = 'Password does not meet the requirements.';
       return;
     }
-
     try {
       toggleSpinner(true, 'register-button');
-      const response = await api.post('register', { username, email, password, twoFactorMethod, bypass2FA });
+      const response = await api.post('register', { username, email, password });
       if (response.status === 201) {
-        authStorage.store(response.data.token, username);
-        if (!bypass2FA && response.data.twoFactorMethod) {
+        if (response.data.twoFactorRequired) {
           authStorage.setTempUsername(username);
-          formManager.show2FA(response.data.twoFactorMethod);
-          if (response.data.twoFactorMethod === 'totp' && response.data.qrCode) {
-            const qrCodeImage = document.getElementById('qr-code');
-            if (qrCodeImage) {
-              qrCodeImage.src = response.data.qrCode;
-              qrCodeImage.classList.remove('hidden');
-            }
-          }
+          formManager.show2FA();
         } else {
+          authStorage.store(response.data.token, username);
           window.location.href = `/user/${response.data.dashboardToken}`;
         }
       }
@@ -110,21 +125,18 @@ const handlers = {
     event.preventDefault();
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value.trim();
-    const bypass2FA = document.getElementById('bypass-2fa-login').checked;
     const errorElement = document.getElementById('login-error');
     errorElement.textContent = '';
-
     if (!username || !password) {
       errorElement.textContent = 'Please fill in all fields.';
       return;
     }
-
     try {
       toggleSpinner(true, 'login-button');
-      const response = await api.post('login', { username, password, bypass2FA });
-      if (response.data.twoFactorRequired && !bypass2FA) {
+      const response = await api.post('login', { username, password });
+      if (response.data.twoFactorRequired) {
         authStorage.setTempUsername(username);
-        formManager.show2FA(response.data.twoFactorMethod);
+        formManager.show2FA();
       } else {
         authStorage.store(response.data.token, username);
         window.location.href = `/user/${response.data.dashboardToken}`;
@@ -137,19 +149,14 @@ const handlers = {
   },
   async verify2FAHandler(event) {
     event.preventDefault();
-    const totpVisible = !document.getElementById('totp-container').classList.contains('hidden');
-    const token = totpVisible
-      ? document.getElementById('totp-token').value.trim()
-      : document.getElementById('email-token').value.trim();
+    const token = document.getElementById('email-token').value.trim();
     const errorElement = document.getElementById('2fa-error');
     errorElement.textContent = '';
     const username = authStorage.getTempUsername();
-
     if (!username || !token) {
       errorElement.textContent = 'Verification failed. Please try logging in again.';
       return;
     }
-
     try {
       toggleSpinner(true, 'verify-2fa-button');
       const response = await api.post('verify-2fa', { username, token });
@@ -171,7 +178,7 @@ const handlers = {
         await api.post('logout', {}, { headers: { Authorization: `Bearer ${token}` } });
       }
       authStorage.clear();
-      window.location.href = '/';
+      window.location.href = '/logged-out';
     } catch (err) {
       showModal('Logout failed. Please try again.');
     } finally {
@@ -186,13 +193,15 @@ const handlers = {
       return;
     }
     try {
-      const response = await api.get(`user/${encodeURIComponent(username)}`, { headers: { Authorization: `Bearer ${token}` } });
+      const response = await api.get(`user/${encodeURIComponent(username)}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       window.location.href = `/user/${response.data.dashboardToken}`;
     } catch {
       authStorage.clear();
       window.location.href = '/';
     }
-  },
+  }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -203,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const logoutButton = document.getElementById('logout-button');
   const showRegisterLink = document.getElementById('show-register');
   const showLoginLink = document.getElementById('show-login');
-
+  const resendButton = document.getElementById('resend-button');
   if (registerButton) registerButton.addEventListener('click', handlers.registerHandler);
   if (loginButton) loginButton.addEventListener('click', handlers.loginHandler);
   if (verify2FAButton) verify2FAButton.addEventListener('click', handlers.verify2FAHandler);
@@ -211,6 +220,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (showRegisterLink) showRegisterLink.addEventListener('click', () => formManager.show('register-form'));
   if (showLoginLink) showLoginLink.addEventListener('click', () => formManager.show('login-form'));
   if (passwordInput) passwordInput.addEventListener('input', () => validatePassword(passwordInput.value));
-
+  if (resendButton) {
+    resendButton.addEventListener('click', async () => {
+      await resend2FACode();
+    });
+  }
   handlers.authenticated();
 });
