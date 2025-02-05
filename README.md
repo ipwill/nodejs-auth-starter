@@ -58,7 +58,9 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
    ```
    Open the MailHog web UI at [http://127.0.0.1:8025](http://127.0.0.1:8025).
 
-   ![mailhog-screenshot](images/mailhog-test-ss.png)
+   |![MailHog Screenshot](images/mailhog-test-ss.png)|
+   |-----------------------------------------------|
+
 
    **Without Docker:**
    - Download the appropriate MailHog binary from [MailHog Releases](https://github.com/mailhog/MailHog/releases).
