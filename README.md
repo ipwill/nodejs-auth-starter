@@ -4,20 +4,20 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
 
 ## Features
 
-- User registration with email 2FA
-- Secure login with JWT authentication
-- Email-based 2FA verification before issuing tokens
-- SQLite database for persistence
-- EJS templates for the UI
-- CSRF protection and secure HTTP headers via Helmet
-- Bundled client-side code with Webpack
+- User dashboard with dynamic URL generation
+- Login page with secure login (JWT auth)
+- Email 2FA verification pre-issued tokens
+- SQLite database
+- .ejs UI templates
+- Helmet CSRF protection and secure HTTP headers
+- Webpack config
 
 ## Setup
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
-   cd <repository-folder>
+   git clone https://github.com/cgtwig/nodejs-auth-starter
+   cd nodejs-auth-starter
    ```
 
 2. **Install dependencies:**
@@ -29,23 +29,18 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
    ```env
    PORT=3000
    NODE_ENV=development
-
    JWT_SECRET=
-
    # MailHog SMTP Configuration for Local Development
    SMTP_HOST=127.0.0.1
    SMTP_PORT=1025
    SMTP_SECURE=false
    SMTP_USER=
    SMTP_PASS=
-
    DB_PATH=./database.db
    ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
    ALLOWED_HOSTS=localhost:3000,127.0.0.1:3000
-
    ENCRYPTION_KEY=
    ENCRYPTION_IV=
-
    CSRF_SECRET=
    ```
 
@@ -55,7 +50,7 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
    openssl rand -hex 16   # For ENCRYPTION_IV
    ```
 
-4. **Setup and run MailHog for local email testing:**
+4. **Setup and run MailHog for local 2FA email testing:**
 
    **Using Docker (recommended):**
    ```bash
@@ -96,26 +91,25 @@ npm run dev
 ├── package.json
 ├── public
 │   ├── css
-│   │   ├── all.min.css
 │   │   ├── styles.css
-│   │   └── uStyles.css
+│   │   └── styles-two.css
 │   └── js
 │       ├── bundle.js          # Webpack output
-│       ├── bundle.js.map
-│       ├── script.js          # Helper functions (ES module)
+│       ├── script.js          # Helper functions
 │       └── uDashboard.js
 ├── server.js                  # Express server and API endpoints
 ├── src
-│   └── app.js                 # Client-side application entry point
+│   └── app.js
 ├── views
-│   ├── index.ejs              # Main page template
-│   └── user-dashboard.ejs     # User dashboard template
+│   ├── index.ejs
+│   ├── logged-out.ejs
+│   └── user-dashboard.ejs
 └── webpack.config.cjs         # Webpack configuration
 ```
 
 ## Technologies Used
 
-- **Backend:** Node.js, Express, Better-SQLite3, JWT, Nodemailer
+- **Backend:** Node.js, Express, Better-SQLite3, JWT, Nodemailer (2FA)
 - **Frontend:** Vanilla JavaScript, EJS templates, CSS
 - **Bundling:** Webpack, Babel
 - **Development Tools:** Docker (for MailHog)
