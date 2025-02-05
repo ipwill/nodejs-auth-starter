@@ -1,7 +1,7 @@
 {
   "name": "simple-spa-2fa",
   "version": "1.0.0",
-  "description": "A simple SPA with login, register, and 2FA using TOTP and email",
+  "description": "A simple SPA with login, register, and 2FA using email",
   "type": "module",
   "main": "server.js",
   "scripts": {
