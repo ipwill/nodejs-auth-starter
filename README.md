@@ -1,20 +1,15 @@
 # Simple SPA with 2FA
 
 A minimal single-page application (SPA) for user authentication with Two-Factor Authentication (2FA) built with Node.js, Express, and modern JavaScript. The app uses email-based 2FA for user registration and login, stores data in SQLite, and bundles client-side code with Webpack. MailHog is used for local email testing.
-<figure>
-    <img src="images/login-ss.png" alt="login-ss.png">
-    <figcaption><em>login-ss.png</em></figcaption>
-</figure>
 
-<figure>
-    <img src="images/register-ss.png" alt="register-ss.png">
-    <figcaption><em>register-ss.png</em></figcaption>
-</figure>
+![login-ss.png](images/login-ss.png)  
+*login-ss.png*
 
-<figure>
-    <img src="images/2fa-ss.png" alt="2fa-ss.png">
-    <figcaption><em>2fa-ss.png</em></figcaption>
-</figure>
+![register-ss.png](images/register-ss.png)  
+*register-ss.png*
+
+![2fa-ss.png](images/2fa-ss.png)  
+*2fa-ss.png*
 
 ## Features
 
@@ -121,10 +116,8 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
    ```
    Open the MailHog web UI at [http://127.0.0.1:8025](http://127.0.0.1:8025).
    
-   <figure>
-       <img src="images/mailhog-ui-ss.png" alt="mailhog-ui-ss.png">
-       <figcaption><em>mailhog-ui-ss.png</em></figcaption>
-   </figure>
+   ![mailhog-ui-ss.png](images/mailhog-ui-ss.png)  
+   *mailhog-ui-ss.png*
 
    **Without Docker:**
    - Download the appropriate MailHog binary from [MailHog Releases](https://github.com/mailhog/MailHog/releases).
