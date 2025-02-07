@@ -1,5 +1,5 @@
 # nodejs-auth-starter
-A simple real-time user auth web app with built-in support for CSRF, Helmet, and JWT. This is useful for using as a starting point when building custom auth for NodeJS applications. The app includes a frontend built with vanilla JavaScript and a backend server using Express. The app stores user data using a simple SQLite, and bundles client-side code with Webpack. 2FA works using MailHog (testing purposes only) and all setup instructions can be found below. For actual use, a real mail server  must be setup for 2FA to work correctly.
+Real-time SPA with user authentication that includes support for 2FA, CSRF, Helmet, and JWT. This is meant to be used as a starting point when building custom auth for NodeJS applications. The app includes a frontend built with vanilla JavaScript and a backend server using Express. The app stores user data using a simple SQLite, and bundles client-side code with Webpack. 2FA works using MailHog (testing purposes only) and all setup instructions can be found below. For actual use, a real mail server  must be setup for 2FA to work correctly.
 
 ![login-ss.png](images/login-ss.png)  
 *login-ss.png*
