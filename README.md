@@ -46,12 +46,54 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
 
    **Generate .env values using terminal:**
    ```bash
-   openssl rand -hex 32   # For JWT_SECRET, ENCRYPTION_KEY, and CSRF_SECRET
+   openssl rand -hex 32   # For JWT_SECRET, ENCRYPTION_KEY, and CSRF_SECRET (generate different one for each)
    openssl rand -hex 16   # For ENCRYPTION_IV
    ```
-
-4. **Setup and run MailHog for local 2FA email testing:**
-
+   ### 4. Setup and Run MailHog for Local 2FA Email Testing (developers only)
+   #### Works on Linux, macOS, Windows via Git Bash/WSL.
+   Simply paste the script into terminal and run to **install and start MailHog**. It ensures a fresh installation and resolves port conflicts automatically.
+   ```bash
+   # Detect OS type (Linux/macOS)
+   OS=$(uname -s)
+   ARCH=$(uname -m)
+   
+   if [ "$OS" = "Darwin" ]; then
+       PLATFORM="macOS"
+   elif [ "$OS" = "Linux" ]; then
+       PLATFORM="linux"
+   else
+       echo "Unsupported OS. Please install MailHog manually."
+       exit 1
+   fi
+   
+   # Detect system architecture (x86_64/ARM)
+   if [ "$ARCH" = "x86_64" ]; then
+       ARCH="amd64"
+   elif [ "$ARCH" = "aarch64" ]; then
+       ARCH="arm"
+   else
+       echo "Unsupported architecture. Please install MailHog manually."
+       exit 1
+   fi
+   
+   # Define the MailHog download URL
+   URL="https://github.com/mailhog/MailHog/releases/latest/download/MailHog_${PLATFORM}_${ARCH}"
+   
+   # Kill any process using port 1025 (without sudo) to avoid conflicts
+   kill -9 $(lsof -ti:1025) 2>/dev/null || true
+   
+   # Download, set permissions, and run MailHog
+   mkdir -p ~/bin && wget -qO ~/bin/MailHog "$URL" && chmod +x ~/bin/MailHog && ~/bin/MailHog
+   ```
+   ### Access MailHog UI
+   - **Web UI:** [http://0.0.0.0:8025/](http://0.0.0.0:8025/) 
+   - **SMTP Server:** `localhost:1025`
+   
+   For Windows users, download the latest `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases) and run:
+   ```powershell
+   .\MailHog.exe
+   ```
+   
    **Using Docker (recommended):**
    ```bash
    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
