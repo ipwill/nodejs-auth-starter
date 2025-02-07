@@ -25,30 +25,37 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
    npm install
    ```
 
-3. **Create a `.env` file in the project root** with the following content. Sensitive keys are left blank; generate new values using the commands provided.
-   ```env
-   PORT=3000
-   NODE_ENV=development
-   JWT_SECRET=
-   # MailHog SMTP Configuration for Local Development
-   SMTP_HOST=127.0.0.1
-   SMTP_PORT=1025
-   SMTP_SECURE=false
-   SMTP_USER=
-   SMTP_PASS=
-   DB_PATH=./database.db
-   ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
-   ALLOWED_HOSTS=localhost:3000,127.0.0.1:3000
-   ENCRYPTION_KEY=
-   ENCRYPTION_IV=
-   CSRF_SECRET=
-   ```
-
-   **Generate .env values using terminal:**
+3. **Rename the file `.env-example` to `.env` in the project root**. Or create a new file with the contents of `.env-example` below.
+   - Generate values for the blank lines (`JWT_SECRET`, `ENCRYPTION_KEY`, `ENCRYPTION_IV`, and `CSRF_SECRET`)
    ```bash
    openssl rand -hex 32   # For JWT_SECRET, ENCRYPTION_KEY, and CSRF_SECRET (generate different one for each)
    openssl rand -hex 16   # For ENCRYPTION_IV
    ```
+
+   #### `.env-example`
+   ```env
+   # Server Configuration
+   PORT=3000
+   NODE_ENV=development
+   # JWT Secret Key (Used for Authentication Tokens)
+   JWT_SECRET=
+   # MailHog SMTP Configuration (Local Development)
+   SMTP_HOST=127.0.0.1
+   SMTP_PORT=1025
+   SMTP_SECURE=false
+   # SQLite Database File
+   DB_PATH=./database.db
+   # Allowed Origins (Frontend URLs that can access the backend)
+   ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+   # Allowed Hosts (Prevent Host Header Injection)
+   ALLOWED_HOSTS=localhost:3000,127.0.0.1:3000
+   # Encryption Keys (Generate Secure Random Values)
+   ENCRYPTION_KEY=
+   ENCRYPTION_IV=
+   # CSRF Protection Secret
+   CSRF_SECRET=
+   ```
+   
    ### 4. Setup and Run MailHog for Local 2FA Email Testing (developers only)
    #### Works on Linux, macOS, Windows via Git Bash/WSL.
    Simply paste the script into terminal and run to **install and start MailHog**. It ensures a fresh installation and resolves port conflicts automatically.
