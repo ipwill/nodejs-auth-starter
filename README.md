@@ -1,6 +1,6 @@
-# Simple SPA with 2FA
+# nodejs-auth-starter
 
-A minimal single-page application (SPA) for user authentication with Two-Factor Authentication (2FA) built with Node.js, Express, and modern JavaScript. The app uses email-based 2FA for user registration and login, stores data in SQLite, and bundles client-side code with Webpack. MailHog is used for local email testing.
+nodejs-auth-starter is a minimal single-page application (SPA) for user authentication with Two-Factor Authentication (2FA) built with Node.js, Express, and modern JavaScript. The app uses email-based 2FA for user registration and login, stores data in SQLite, and bundles client-side code with Webpack. MailHog is used for local email testing.
 
 ![login-ss.png](images/login-ss.png)  
 *login-ss.png*
