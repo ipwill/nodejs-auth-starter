@@ -113,20 +113,16 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    ```bash
    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
    ```
-   Open the MailHog web UI at [http://127.0.0.1:8025](http://127.0.0.1:8025).
+    [http://127.0.0.1:8025](http://127.0.0.1:8025).
    
    ![mailhog-ui-ss.png](images/mailhog-ui-ss.png)  
    *mailhog-ui-ss.png*
-
-   **Without Docker:**
-   - Download the appropriate MailHog binary from [MailHog Releases](https://github.com/mailhog/MailHog/releases).
-   - Run the binary (by default, MailHog listens on SMTP port 1025 and serves the UI on port 8025).
 
 6. **Build the client-side bundle**
    ```bash
    npm run build
    ```
-   This uses Webpack (configured in `webpack.config.cjs`) to bundle your code from `src/app.js` (which imports from `public/js/script.js`) into `public/js/bundle.js`.
+   Webpack is used (`webpack.config.cjs`) to bundle client-side javascript code (`src/app.js`, `public/js/script.js`, and `public/js/user-dashboard.js`) into `public/js/bundle.js`.
 
 7. **Start the server:**
    ```bash
