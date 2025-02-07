@@ -1,6 +1,5 @@
 # nodejs-auth-starter
-
-nodejs-auth-starter is meant to be a starting point for development purposes. Basic 2FA is built in, along with secure input checking. The entire app loads new pages in real time and it was built with Node.js, Express, and vanilla JavaScript. The app stores data in SQLite, and bundles client-side code with Webpack. MailHog is used for local email testing.
+A simple real-time user auth web app with built-in support for CSRF, Helmet, and JWT. This is useful for using as a starting point when building custom auth for NodeJS applications. The entire app loads new pages in real time and it was built with Node.js, Express, and vanilla JavaScript. The app stores data in SQLite, and bundles client-side code with Webpack. MailHog is used for local email testing.
 
 ![login-ss.png](images/login-ss.png)  
 *login-ss.png*
@@ -143,8 +142,8 @@ nodejs-auth-starter is meant to be a starting point for development purposes. Ba
 
 - **Backend:** Node.js, Express, Better-SQLite3, JWT, Nodemailer (2FA)
 - **Frontend:** Vanilla JavaScript, EJS templates, CSS
-- **Bundling:** Webpack, Babel
-- **Development Tools:** Docker (for MailHog)
+- **Bundling:** Webpack
+- **Development Tools:** MailHog (optional)
 
 ## Troubleshooting
 
