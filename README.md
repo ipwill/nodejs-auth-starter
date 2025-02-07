@@ -56,8 +56,8 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
    CSRF_SECRET=
    ```
    
-   ### 4. Setup and Run MailHog for Local 2FA Email Testing (developers only)
-   #### Works on Linux, macOS, Windows via Git Bash/WSL.
+4. **2FA testing: Install MailHog (developers only)**
+   - Works on Linux, macOS, Windows via Git Bash/WSL.
    Simply paste the script into terminal and run to **install and start MailHog**. It ensures a fresh installation and resolves port conflicts automatically.
    ```bash
    # Detect OS type (Linux/macOS)
@@ -92,11 +92,11 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
    # Download, set permissions, and run MailHog
    mkdir -p ~/bin && wget -qO ~/bin/MailHog "$URL" && chmod +x ~/bin/MailHog && ~/bin/MailHog
    ```
-   ### Access MailHog UI
+   Access the MailHog UI
    - **Web UI:** [http://0.0.0.0:8025/](http://0.0.0.0:8025/) 
    - **SMTP Server:** `localhost:1025`
    
-   For Windows users, download the latest `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases) and run:
+   Note: Windows users will need to download the latest `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases) and run:
    ```powershell
    .\MailHog.exe
    ```
@@ -115,50 +115,21 @@ A minimal single-page application (SPA) for user authentication with Two-Factor 
    - Download the appropriate MailHog binary from [MailHog Releases](https://github.com/mailhog/MailHog/releases).
    - Run the binary (by default, MailHog listens on SMTP port 1025 and serves the UI on port 8025).
 
-6. **Build the client-side bundle:**
+5. **Build the client-side bundle**
    ```bash
    npm run build
    ```
    This uses Webpack (configured in `webpack.config.cjs`) to bundle your code from `src/app.js` (which imports from `public/js/script.js`) into `public/js/bundle.js`.
 
-7. **Start the server:**
+6. **Start the server:**
    ```bash
    npm start
    ```
-   The app will be available at [http://localhost:3000](http://localhost:3000).
-
-## Development Mode
-
-For hot-reloading and live updates during development, run:
-```bash
-npm run dev
-```
-
-## Project Structure
-
-```
-.
-├── README.md
-├── database.db
-├── package-lock.json
-├── package.json
-├── public
-│   ├── css
-│   │   ├── styles.css
-│   │   └── styles-two.css
-│   └── js
-│       ├── bundle.js          # Webpack output
-│       ├── script.js          # Helper functions
-│       └── uDashboard.js
-├── server.js                  # Express server and API endpoints
-├── src
-│   └── app.js
-├── views
-│   ├── index.ejs
-│   ├── logged-out.ejs
-│   └── user-dashboard.ejs
-└── webpack.config.cjs         # Webpack configuration
-```
+   Or to enable hot-reloading and live updates during development, run:
+   ```bash
+   npm run dev
+   ```
+   The app will now be available at [http://localhost:3000](http://localhost:3000).
 
 ## Technologies Used
 
