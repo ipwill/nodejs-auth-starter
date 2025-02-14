@@ -2,13 +2,15 @@ function showModal(message) {
   const modal = document.createElement('div');
   modal.className = 'modal';
   modal.innerHTML = `
-    <div class="modal-content">
-      <p>${message}</p>
-      <button id="close-modal">Close</button>
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <p>${message}</p>
+        <button id="close-modal">Close</button>
+      </div>
     </div>
   `;
   document.body.appendChild(modal);
-  document.getElementById('close-modal').onclick = () => modal.remove();
+  document.getElementById('close-modal').addEventListener('click', () => modal.remove());
 }
 
 function toggleSpinner(visible, buttonId = null) {
@@ -17,15 +19,10 @@ function toggleSpinner(visible, buttonId = null) {
     if (button) {
       const buttonContent = button.querySelector('.button-content');
       const buttonSpinner = button.querySelector('.button-spinner');
-      if (visible) {
-        button.disabled = true;
-        buttonContent.classList.add('hidden');
-        buttonSpinner.classList.remove('hidden');
-      } else {
-        button.disabled = false;
-        buttonContent.classList.remove('hidden');
-        buttonSpinner.classList.add('hidden');
-      }
+      
+      button.disabled = visible;
+      buttonContent.classList.toggle('hidden', visible);
+      buttonSpinner.classList.toggle('hidden', !visible);
     }
   }
 
@@ -42,20 +39,15 @@ function validatePassword(password) {
     special: /[@$!%*?&]/.test(password),
   };
 
-  Object.keys(requirements).forEach(key => {
+  Object.entries(requirements).forEach(([key, isValid]) => {
     const element = document.getElementById(key);
     if (element) {
-      if (requirements[key]) {
-        element.classList.remove('invalid');
-        element.classList.add('valid');
-      } else {
-        element.classList.remove('valid');
-        element.classList.add('invalid');
-      }
+      element.classList.toggle('valid', isValid);
+      element.classList.toggle('invalid', !isValid);
     }
   });
 
-  return Object.values(requirements).every(value => value);
+  return Object.values(requirements).every(Boolean);
 }
 
 export { showModal, toggleSpinner, validatePassword };
