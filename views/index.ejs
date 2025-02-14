@@ -113,6 +113,28 @@
       <p class="font-second">
         Don't have an account? <a href="#" id="show-register" class="link">Register</a>
       </p>
+      <p class="font-second">
+        <a href="#" id="forgot-password-link" class="link">Forgot password?</a>
+      </p>
+    </div>
+    <div id="forgot-password-form" class="form-section">
+      <h4 class="text-div">Forgot Password</h4>
+      <div class="form-group">
+        <label for="forgot-email">Enter your email</label>
+        <input type="email" id="forgot-email" placeholder="Enter your email" autocomplete="email">
+      </div>
+      <button id="send-reset-link">
+        <span class="button-content">Send Reset Link</span>
+        <span class="button-spinner hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+            <path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path>
+          </svg>
+        </span>
+      </button>
+      <p class="error" id="forgot-password-error"></p>
+      <p class="font-second">
+        Remember your password? <a href="#" id="back-to-login" class="link">Back to Login</a>
+      </p>
     </div>
     <div id="2fa-form" class="form-section">
       <h2>
