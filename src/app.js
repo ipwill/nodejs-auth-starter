@@ -47,8 +47,7 @@ const api = axios.create({
   withCredentials: true
 });
 
-const csrfMetaTag = document.querySelector('meta[name="csrf-token"]');
-const csrfToken = csrfMetaTag ? csrfMetaTag.getAttribute('content') : '';
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 api.defaults.headers.post['X-CSRF-Token'] = csrfToken;
 api.defaults.headers.put['X-CSRF-Token'] = csrfToken;
 api.defaults.headers.delete['X-CSRF-Token'] = csrfToken;
@@ -95,14 +94,17 @@ const handlers = {
     const password = document.getElementById('password').value.trim();
     const errorElement = document.getElementById('register-error');
     errorElement.textContent = '';
+
     if (!username || !email || !password) {
       errorElement.textContent = 'Please fill in all fields.';
       return;
     }
+
     if (!validatePassword(password)) {
       errorElement.textContent = 'Password does not meet the requirements.';
       return;
     }
+
     try {
       toggleSpinner(true, 'register-button');
       const response = await api.post('register', { username, email, password });
@@ -121,16 +123,19 @@ const handlers = {
       toggleSpinner(false, 'register-button');
     }
   },
+
   async loginHandler(event) {
     event.preventDefault();
     const username = document.getElementById('login-username').value.trim();
     const password = document.getElementById('login-password').value.trim();
     const errorElement = document.getElementById('login-error');
     errorElement.textContent = '';
+
     if (!username || !password) {
       errorElement.textContent = 'Please fill in all fields.';
       return;
     }
+
     try {
       toggleSpinner(true, 'login-button');
       const response = await api.post('login', { username, password });
@@ -147,6 +152,7 @@ const handlers = {
       toggleSpinner(false, 'login-button');
     }
   },
+
   async verify2FAHandler(event) {
     event.preventDefault();
     const token = document.getElementById('email-token').value.trim();
@@ -157,6 +163,7 @@ const handlers = {
       errorElement.textContent = 'Verification failed. Please try logging in again.';
       return;
     }
+
     try {
       toggleSpinner(true, 'verify-2fa-button');
       const response = await api.post('verify-2fa', { username, token });
@@ -169,6 +176,7 @@ const handlers = {
       toggleSpinner(false, 'verify-2fa-button');
     }
   },
+
   async logoutHandler(event) {
     event.preventDefault();
     try {
@@ -185,6 +193,7 @@ const handlers = {
       toggleSpinner(false, 'logout-button');
     }
   },
+
   async authenticated() {
     const { token, username } = authStorage.get();
     if (!token || !username) {
@@ -192,6 +201,7 @@ const handlers = {
       formManager.show('login-form');
       return;
     }
+
     try {
       const response = await api.get(`user/${encodeURIComponent(username)}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -213,6 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const showRegisterLink = document.getElementById('show-register');
   const showLoginLink = document.getElementById('show-login');
   const resendButton = document.getElementById('resend-button');
+
   if (registerButton) registerButton.addEventListener('click', handlers.registerHandler);
   if (loginButton) loginButton.addEventListener('click', handlers.loginHandler);
   if (verify2FAButton) verify2FAButton.addEventListener('click', handlers.verify2FAHandler);
