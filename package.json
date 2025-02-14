@@ -1,6 +1,6 @@
 {
   "name": "nodejs-auth-starter",
-  "version": "1.0.0",
+  "version": "1.2",
   "description": "Real-time SPA with user authentication that includes support for 2FA, CSRF, Helmet, and JWT.",
   "type": "module",
   "main": "server.js",
