@@ -1,5 +1,4 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
@@ -189,6 +188,19 @@ const csrfProtection = (req, res, next) => {
   }
 };
 
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+  return salt + ':' + hash;
+}
+function verifyPassword(password, storedHash) {
+  const parts = storedHash.split(':');
+  const salt = parts[0];
+  const originalHash = parts[1];
+  const hash = crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+  return crypto.timingSafeEqual(Buffer.from(hash, 'hex'), Buffer.from(originalHash, 'hex'));
+}
+
 app.get('/', csrfProtection, (req, res) => {
   res.render('index', { title: 'Login App', csrfToken: res.locals.csrfToken });
 });
@@ -224,7 +236,7 @@ app.post(
         .prepare('SELECT id FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)')
         .get(username, email);
       if (existingUser) return res.status(400).json({ message: 'Username or email is already taken.' });
-      const hashedPassword = await bcrypt.hash(password, 12);
+      const hashedPassword = hashPassword(password);
       const timestamp = Date.now();
       const dashboardToken = crypto.randomBytes(32).toString('hex');
       const result = db.prepare(`
@@ -280,7 +292,7 @@ app.post(
       const { username, password, bypass2FA } = req.body;
       const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
       if (!user) return res.status(400).json({ message: 'Invalid credentials.' });
-      const isPasswordValid = await bcrypt.compare(password, user.password);
+      const isPasswordValid = verifyPassword(password, user.password);
       if (!isPasswordValid) return res.status(400).json({ message: 'Invalid credentials.' });
       if (user.two_factor_method === 'email' && !user.bypass_2fa && !bypass2FA) {
         const code = Math.floor(100000 + Math.random() * 900000).toString();
