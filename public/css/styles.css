@@ -279,6 +279,77 @@ button.loading .button-content {
     display: none !important;
 }
 
+#forgot-password-form {
+    display: none;
+}
+
+#forgot-password-form.active {
+    display: block;
+}
+
+#forgot-password-form .form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+#forgot-password-form button {
+    background: var(--button-bg);
+}
+
+#forgot-password-form button:hover {
+    background: var(--button-bg-hover);
+}
+
+#forgot-password-form p.font-second {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+#forgot-password-form p.font-second a {
+    color: var(--text-link);
+}
+
+#forgot-password-form p.font-second a:hover {
+    text-decoration: underline;
+}
+
+#forgot-password-form .error {
+    font-size: var(--font-size-sm);
+    color: var(--danger-color);
+    margin-top: var(--spacing-xs);
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .container,
+    .logged-out-container {
+        width: 95%;
+        margin: 4vh auto;
+        padding: var(--spacing-md);
+    }
+
+    h2 {
+        font-size: var(--font-size-lg);
+    }
+
+    button {
+        font-size: var(--font-size-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .container,
+    .logged-out-container {
+        width: 95%;
+        margin: 0 auto;
+        padding: var(--spacing-md);
+        border-radius: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+
 .logged-out-container {
     max-width: 400px;
     margin: 5vh auto;
@@ -314,80 +385,6 @@ button.loading .button-content {
 
 .logged-out-container a:hover {
     background: var(--accent-hover);
-}
-
-@media (max-width: 768px) {
-
-    .container,
-    .logged-out-container {
-        width: 95%;
-        margin: 4vh auto;
-        padding: var(--spacing-md);
-    }
-
-    h2 {
-        font-size: var(--font-size-lg);
-    }
-
-    button {
-        font-size: var(--font-size-sm);
-    }
-}
-
-@media (max-width: 480px) {
-
-    .container,
-    .logged-out-container {
-        width: 95%;
-        margin: 0 auto;
-        padding: var(--spacing-md);
-        border-radius: 0;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-}
-
-.logged-out-container.developer {
-    max-width: 400px;
-    margin: 5vh auto;
-    padding: var(--spacing-md);
-    background: var(--background-color);
-    border: 2px dashed var(--accent-color);
-    border-radius: var(--border-radius);
-    text-align: center;
-    font-family: "Source Code Pro", monospace;
-    box-shadow: none;
-}
-
-.logged-out-container.developer h2 {
-    font-size: var(--font-size-xl);
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-md);
-}
-
-.logged-out-container.developer p {
-    font-size: var(--font-size-base);
-    color: var(--text-secondary);
-    margin-bottom: var(--spacing-md);
-}
-
-.logged-out-container.developer a {
-    display: inline-block;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-size: var(--font-size-sm);
-    background: var(--button-bg);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    color: #fff;
-    text-decoration: none;
-    transition: var(--transition);
-}
-
-.logged-out-container.developer a:hover {
-    background: var(--button-bg-hover);
-    border-color: var(--accent-hover);
 }
 
 @media (max-width: 768px) {
