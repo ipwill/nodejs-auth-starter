@@ -12,13 +12,13 @@
 
 <body>
   <div class="logged-out-container developer">
-    <h2>Session terminated</h2>
-    <% if (reason==='expired' ) { %>
-      <p>Your session expired or you logged out. Reboot your login.</p>
-      <% } else { %>
-        <p>Error: Not currently logged in.</p>
-        <% } %>
-          <a href="/">Start over</a>
+    <h2>Session Terminated</h2>
+    <% if (reason === 'expired') { %>
+      <p>Your session expired, or you logged out. Please log in again to continue.</p>
+    <% } else { %>
+      <p>Error: Not currently logged in. Please log in to access your account.</p>
+    <% } %>
+    <a href="/" class="button">Start Over</a>
   </div>
 </body>
 
