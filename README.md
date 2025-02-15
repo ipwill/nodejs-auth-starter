@@ -70,7 +70,7 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    - **MacOSX/Linux:** THe best way to setup MailHog is to run this script in terminal. It will install/launch a fresh installation of MailHog on port 8025.
     
    ```bash
-   # Check OS, kill any process using port 8025 (without sudo) to avoid conflicts.
+   # Check OS, kills current running MailHog instance if needed.
    # Defines the MailHog download URL and then downlaods, sets permissions and launches web ui.
    OS=$(uname -s)
    ARCH=$(uname -m)
