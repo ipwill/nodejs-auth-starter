@@ -64,8 +64,8 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    CSRF_SECRET=
    ```
    
-4. **2FA testing: Install MailHog (developers only)**
-   - Works on Linux, macOS, Windows via Git Bash/WSL.
+4. **2FA Setup:**
+   - Linux/Mac quick setup: (Windows instructions below)
    Simply paste the script into terminal and run to **install and start MailHog**. It ensures a fresh installation and resolves port conflicts automatically.
    ```bash
    # Detect OS type (Linux/macOS)
@@ -100,16 +100,10 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    # Download, set permissions, and run MailHog
    mkdir -p ~/bin && wget -qO ~/bin/MailHog "$URL" && chmod +x ~/bin/MailHog && ~/bin/MailHog
    ```
-   Access the MailHog UI
-   - **Web UI:** [http://0.0.0.0:8025/](http://0.0.0.0:8025/) 
-   - **SMTP Server:** `localhost:1025`
    
-   Note: Windows users will need to download the latest `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases) and run:
-   ```powershell
-   .\MailHog.exe
-   ```
+   MailHog Web UI can be accessed now at: [http://0.0.0.0:8025/](http://0.0.0.0:8025/) 
    
-   **Using Docker (recommended):**
+   **Alternative MailHog setup using Docker (optional)**
    ```bash
    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
    ```
@@ -118,13 +112,18 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    ![mailhog-ui-ss.png](images/mailhog-ui-ss.png)  
    *mailhog-ui-ss.png*
 
-6. **Build the client-side bundle**
+   **Windows users** can download the latest `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases) and then run the following in powershell:
+   ```powershell
+   .\MailHog.exe
+   ```
+
+6. **Build client-side:**
    ```bash
    npm run build
    ```
-   Webpack is used (`webpack.config.cjs`) to bundle client-side javascript code (`src/app.js`, `public/js/script.js`, and `public/js/user-dashboard.js`) into `public/js/bundle.js`.
+   Webpack (`webpack.config.cjs`) for bundling client-side javascript (`src/app.js`, `public/js/script.js`, and `public/js/user-dashboard.js`) into `public/js/bundle.js`.
 
-7. **Start the server:**
+7. **Start server:**
    ```bash
    npm start
    ```
