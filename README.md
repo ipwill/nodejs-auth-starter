@@ -33,7 +33,7 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    npm install
    ```
 
-3. **Rename `.env-example` file to `.env`**
+3. **Rename `.env-example` file to `.env`:**  
    (Or create a new file named `.env` in project root with the below contents)  
    Generate values for the blank lines (`JWT_SECRET`, `ENCRYPTION_KEY`, `ENCRYPTION_IV`, and `CSRF_SECRET`)
    ```bash
