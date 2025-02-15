@@ -109,7 +109,7 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    ![mailhog-ui-ss.png](images/mailhog-ui-ss.png)  
    *mailhog-ui-ss.png*
 
-7. **Build client-side JS (`public/js/bundle.js`)**
+7. **Build client-side JS**
    ```bash
    npm run build
    ```
