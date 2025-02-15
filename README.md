@@ -63,15 +63,16 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    # CSRF Protection Secret
    CSRF_SECRET=
    ```
-   
-4. **2FA Setup:**
-   - Linux/Mac quick setup: (Windows instructions below)
-   Simply paste the script into terminal and run to **install and start MailHog**. It ensures a fresh installation and resolves port conflicts automatically.
+4. **2FA Setup**  
+   - **Windows:**
+     Download `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases)
+   - **MacOSX/Linux:** THe best way to setup MailHog is to run this script in terminal. It will install/launch a fresh installation of MailHog on port 8025.
+    
    ```bash
-   # Detect OS type (Linux/macOS)
+   # Check OS, kill any process using port 1025 (without sudo) to avoid conflicts.
+   # Defines the MailHog download URL and then downlaods, sets permissions and launches web ui.
    OS=$(uname -s)
    ARCH=$(uname -m)
-   
    if [ "$OS" = "Darwin" ]; then
        PLATFORM="macOS"
    elif [ "$OS" = "Linux" ]; then
@@ -80,8 +81,6 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
        echo "Unsupported OS. Please install MailHog manually."
        exit 1
    fi
-   
-   # Detect system architecture (x86_64/ARM)
    if [ "$ARCH" = "x86_64" ]; then
        ARCH="amd64"
    elif [ "$ARCH" = "aarch64" ]; then
@@ -90,20 +89,15 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
        echo "Unsupported architecture. Please install MailHog manually."
        exit 1
    fi
-   
-   # Define the MailHog download URL
+   https://github.com/cgtwig/nodejs-auth-starter/blob/main/README.me
    URL="https://github.com/mailhog/MailHog/releases/latest/download/MailHog_${PLATFORM}_${ARCH}"
-   
-   # Kill any process using port 1025 (without sudo) to avoid conflicts
    kill -9 $(lsof -ti:1025) 2>/dev/null || true
-   
-   # Download, set permissions, and run MailHog
    mkdir -p ~/bin && wget -qO ~/bin/MailHog "$URL" && chmod +x ~/bin/MailHog && ~/bin/MailHog
    ```
    
-   MailHog Web UI can be accessed now at: [http://0.0.0.0:8025/](http://0.0.0.0:8025/) 
-   
-   **Alternative MailHog setup using Docker (optional)**
+   **Access MailHog UI** [http://0.0.0.0:8025/](http://0.0.0.0:8025/)
+     
+   **Mailhog can alternatively be ran with Docker using this one-liner (optional):**
    ```bash
    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
    ```
@@ -112,18 +106,13 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    ![mailhog-ui-ss.png](images/mailhog-ui-ss.png)  
    *mailhog-ui-ss.png*
 
-   **Windows users** can download the latest `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases) and then run the following in powershell:
-   ```powershell
-   .\MailHog.exe
-   ```
-
-6. **Build client-side:**
+7. **Build client-side:**
    ```bash
    npm run build
    ```
    Webpack (`webpack.config.cjs`) for bundling client-side javascript (`src/app.js`, `public/js/script.js`, and `public/js/user-dashboard.js`) into `public/js/bundle.js`.
 
-7. **Start server:**
+8. **Start server:**
    ```bash
    npm start
    ```
