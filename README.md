@@ -63,6 +63,7 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    # CSRF Protection Secret
    CSRF_SECRET=
    ```
+   
 4. **2FA Setup**  
    - **Windows:**
      Download `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases)
@@ -106,13 +107,12 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    ![mailhog-ui-ss.png](images/mailhog-ui-ss.png)  
    *mailhog-ui-ss.png*
 
-7. **Build client-side:**
+5. **Build client-side JS (`public/js/bundle.js`)**
    ```bash
    npm run build
    ```
-   Webpack (`webpack.config.cjs`) for bundling client-side javascript into `public/js/bundle.js`.
-
-8. **Start server:**
+   
+6. **Start server:**
    ```bash
    # run with hot reloading enabled (recommended)
    npm run dev
