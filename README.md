@@ -110,7 +110,7 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    ```bash
    npm run build
    ```
-   Webpack (`webpack.config.cjs`) for bundling client-side javascript (`src/app.js`, `public/js/script.js`, and `public/js/user-dashboard.js`) into `public/js/bundle.js`.
+   Webpack (`webpack.config.cjs`) for bundling client-side javascript (`src/app.js`, `public/js/script.js`, public/js/user-dashboard.js` --> `public/js/bundle.js`).
 
 8. **Start server:**
    ```bash
