@@ -97,7 +97,7 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    
    **Access MailHog UI** [http://0.0.0.0:8025/](http://0.0.0.0:8025/)
      
-   **Mailhog can alternatively be ran with Docker using this one-liner (optional):**
+   **OR...** Mailhog can alternatively be ran with Docker using this one-liner (optional):
    ```bash
    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
    ```
