@@ -34,7 +34,7 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    ```
 
 3. **Rename `.env-example` file to `.env` and fill-in blank values:**  
-   (Or create a new file named `.env` in project root with the below contents)
+   (or create a new file named `.env` in project root with the below contents)
    
    Values can be generated using the terminal commands below. Values are needed for `JWT_SECRET`, `ENCRYPTION_KEY`, `ENCRYPTION_IV`, and `CSRF_SECRET`)
    ```bash
