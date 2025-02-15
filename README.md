@@ -114,15 +114,15 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
 
 8. **Start server:**
    ```bash
+   # run with hot reloading enabled (recommended)
+   npm run dev
+
+   # run with hot reloading disabled
    npm start
    ```
-   Or to enable hot-reloading and live updates during development, run:
-   ```bash
-   npm run dev
-   ```
    The app will now be available at [http://localhost:3000](http://localhost:3000).
-
-## Technologies Used
+SMTP_HOST=127.0.0.1
+## Dependencies
 
 - **Backend:** Node.js, Express, Better-SQLite3, JWT, Nodemailer (2FA)
 - **Frontend:** Vanilla JavaScript, EJS templates, CSS
@@ -131,14 +131,11 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
 
 ## Troubleshooting
 
-- **400 Bad Request on Registration:**
-  Verify that all required fields (username, email, password) and the CSRF token are correctly sent. Check the request payload in your browser's Network tab.
+- **.env file (required)**  
+  Make sure the following line exists and is not commented out `SMTP_HOST=127.0.0.1`
 
-- **SMTP Connection Issues:**
-  If errors like `ECONNREFUSED` occur, ensure MailHog is running and that `SMTP_HOST` is set to `127.0.0.1`.
-
-- **Caching Issues:**
-  If client-side changes are not reflected, rebuild the bundle (`npm run build`) and clear your browser cache.
+- **Build bundle: (required)**  
+  Run `npm run build`, clear browser cache, and restart server.
 
 ## License
 
