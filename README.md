@@ -33,8 +33,9 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    npm install
    ```
 
-3. **Rename the file `.env-example` to `.env` in the project root**. Or create a new file with the contents of `.env-example` below.
-   - Generate values for the blank lines (`JWT_SECRET`, `ENCRYPTION_KEY`, `ENCRYPTION_IV`, and `CSRF_SECRET`)
+3. **Rename `.env-example` file to `.env`**
+   (Or create a new file named `.env` in project root with the below contents)  
+   Generate values for the blank lines (`JWT_SECRET`, `ENCRYPTION_KEY`, `ENCRYPTION_IV`, and `CSRF_SECRET`)
    ```bash
    openssl rand -hex 32   # For JWT_SECRET, ENCRYPTION_KEY, and CSRF_SECRET (generate different one for each)
    openssl rand -hex 16   # For ENCRYPTION_IV
@@ -64,7 +65,7 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    CSRF_SECRET=
    ```
    
-4. **2FA Setup**  
+6. **2FA Setup**  
    - **Windows:**
      Download `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases)
    - **MacOSX/Linux:** THe best way to setup MailHog is to run this script in terminal. It will install/launch a fresh installation of MailHog on port 8025.
@@ -107,12 +108,12 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    ![mailhog-ui-ss.png](images/mailhog-ui-ss.png)  
    *mailhog-ui-ss.png*
 
-5. **Build client-side JS (`public/js/bundle.js`)**
+7. **Build client-side JS (`public/js/bundle.js`)**
    ```bash
    npm run build
    ```
    
-6. **Start server:**
+8. **Start server:**
    ```bash
    # run with hot reloading enabled (recommended)
    npm run dev
