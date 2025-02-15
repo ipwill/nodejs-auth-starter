@@ -95,14 +95,14 @@ Real-time SPA with user authentication that includes support for 2FA, CSRF, Helm
    mkdir -p ~/bin && wget -qO ~/bin/MailHog "$URL" && chmod +x ~/bin/MailHog && ~/bin/MailHog
    ```
    
-   **Access MailHog UI** [http://0.0.0.0:8025/](http://0.0.0.0:8025/)
-     
    **OR...** Mailhog can alternatively be ran with Docker using this one-liner (optional):
    ```bash
    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
    ```
-    [http://127.0.0.1:8025](http://127.0.0.1:8025).
-   
+   MailHog UI can be accessed in the browser at:
+     [http://localhost:8025](http://localhost:8025).
+
+   if everything is working correctly - you should see the MailHog Web UI:
    ![mailhog-ui-ss.png](images/mailhog-ui-ss.png)  
    *mailhog-ui-ss.png*
 
