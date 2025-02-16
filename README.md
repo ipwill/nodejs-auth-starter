@@ -125,7 +125,7 @@ Real-time user authentication built with vanilla javascript. This is meant to be
    
    You can now go to... [http://localhost:3000](http://localhost:3000)
    
-   ---
+   ***
    
    If you find any errors please [open an issue](https://github.com/cgtwig/nodejs-auth-starter/issues). There is definately room for immprovment here - if you want to help out, submit a pull request.
    
