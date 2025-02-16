@@ -122,8 +122,9 @@ Real-time user authentication built with vanilla javascript. This is meant to be
    # run with hot reloading disabled
    npm start
    ```
-   The app will now be available at [http://localhost:3000](http://localhost:3000).
-SMTP_HOST=127.0.0.1
+   
+   The app will now be available at [http://localhost:3000](http://localhost:3000)
+   
 ## Dependencies
 
 - **Backend:** Node.js, Express, Better-SQLite3, JWT, Nodemailer (2FA)
@@ -140,5 +141,4 @@ SMTP_HOST=127.0.0.1
   Run `npm run build`, clear browser cache, and restart server.
 
 ## License
-
 MIT
