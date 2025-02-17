@@ -1,15 +1,6 @@
 ## NodeJS Auth (2FA)
 Real-time user authentication built with vanilla javascript. This is meant to be used as a headstart when building custom auth for NodeJS applications. Includes database, 2FA, hardened middleware to boost security, styled frontend with Light/Dark theme support, and more. **Database:**The app stores user data using a simple SQLite, and bundles client-side code with Webpack. 2FA works using MailHog (testing purposes only) and all setup instructions can be found below. For actual use, a real mail server  must be setup for 2FA to work correctly.
 
-![login-ss.png](images/login-ss.png)  
-*login-ss.png*
-
-![register-ss.png](images/register-ss.png)  
-*register-ss.png*
-
-![2fa-ss.png](images/2fa-ss.png)  
-*2fa-ss.png*
-
 ## Features
 
 - User dashboard with dynamic URL generation
@@ -128,6 +119,17 @@ Real-time user authentication built with vanilla javascript. This is meant to be
    ***
    
    If you find any errors please [open an issue](https://github.com/cgtwig/nodejs-auth-starter/issues). There is definately room for immprovment here - if you want to help out, submit a pull request.
+
+## Screenshots
+
+![login-ss.png](images/login-ss.png)  
+*login-ss.png*
+
+![register-ss.png](images/register-ss.png)  
+*register-ss.png*
+
+![2fa-ss.png](images/2fa-ss.png)  
+*2fa-ss.png*
    
 ## Dependencies
 
