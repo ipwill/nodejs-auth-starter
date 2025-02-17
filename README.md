@@ -107,7 +107,7 @@ Real-time user authentication built with vanilla javascript. This is meant to be
    ```
    
    **OR...** MailHog can alternatively be ran with Docker using this one-liner (optional):
-   Note: Docker needs to be installed for command to work,
+   Note: Docker needs to be installed for command to work.
    ```bash
    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
    ```
