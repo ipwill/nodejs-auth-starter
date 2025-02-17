@@ -60,21 +60,25 @@ Real-time user authentication built with vanilla javascript. This is meant to be
 6. **2FA Setup**  
    - **Windows:**
      Download `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases)
-   - **MacOSX/Linux:** THe best way to setup MailHog is to run this script in terminal. It will install/launch a fresh installation of MailHog on port 8025.
+   - **MacOSX/Linux:** You can quickly get MailHog running with this script. Just copy and paste into your terminal. It will install/launch a fresh installation of MailHog on port 8025.
     
    ```bash
-   # Check OS, kills current running MailHog instance if needed.
-   # Defines the MailHog download URL and then downlaods, sets permissions and launches web ui.
    OS=$(uname -s)
    ARCH=$(uname -m)
+   
    if [ "$OS" = "Darwin" ]; then
        PLATFORM="macOS"
    elif [ "$OS" = "Linux" ]; then
-       PLATFORM="linux"
+       if [ -f /etc/nixos/version ]; then
+           PLATFORM="nixos"
+       else
+           PLATFORM="linux"
+       fi
    else
        echo "Unsupported OS. Please install MailHog manually."
        exit 1
    fi
+   
    if [ "$ARCH" = "x86_64" ]; then
        ARCH="amd64"
    elif [ "$ARCH" = "aarch64" ]; then
@@ -83,13 +87,27 @@ Real-time user authentication built with vanilla javascript. This is meant to be
        echo "Unsupported architecture. Please install MailHog manually."
        exit 1
    fi
-   https://github.com/cgtwig/nodejs-auth-starter/blob/main/README.me
+   
+   if [ "$PLATFORM" = "nixos" ]; then
+       echo "Detected NixOS. Installing MailHog via Nix package manager."
+       nix-env -iA nixos.mailhog
+       exit 0
+   fi
+   
    URL="https://github.com/mailhog/MailHog/releases/latest/download/MailHog_${PLATFORM}_${ARCH}"
+   
    kill -9 $(lsof -ti:1025) 2>/dev/null || true
+   
+   if ! command -v wget &> /dev/null; then
+       echo "wget not found. Installing..."
+       nix-env -iA nixos.wget
+   fi
+   
    mkdir -p ~/bin && wget -qO ~/bin/MailHog "$URL" && chmod +x ~/bin/MailHog && ~/bin/MailHog
    ```
    
    **OR...** MailHog can alternatively be ran with Docker using this one-liner (optional):
+   Note: Docker needs to be installed for this to work
    ```bash
    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
    ```
