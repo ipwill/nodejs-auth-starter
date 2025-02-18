@@ -24,13 +24,13 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
-      styleSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:'],
-      fontSrc: ["'self'"],
-      objectSrc: ["'none'"],
-      connectSrc: ["'self'"],
-      upgradeInsecureRequests: [],
+        scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+        styleSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:'],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        connectSrc: ["'self'"],
+        upgradeInsecureRequests: [],
     },
   })
 );
@@ -56,9 +56,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
-  : [];
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()) : [];
 app.use(
   cors({
     origin: process.env.NODE_ENV === 'development' ? '*' : allowedOrigins,
@@ -78,9 +76,7 @@ app.use(
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-const allowedHosts = process.env.ALLOWED_HOSTS
-  ? process.env.ALLOWED_HOSTS.split(',').map(host => host.trim())
-  : ['localhost:3000'];
+const allowedHosts = process.env.ALLOWED_HOSTS ? process.env.ALLOWED_HOSTS.split(',').map(host => host.trim()) : ['localhost:3000'];
 app.use((req, res, next) => {
   const host = req.headers.host;
   if (!allowedHosts.includes(host)) return res.status(400).send('Invalid Host Header');
@@ -96,22 +92,31 @@ app.use((req, res, next) => {
 
 function initializeDatabase() {
   db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT UNIQUE NOT NULL,
-      email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
-      two_factor_method TEXT,
-      email_code TEXT,
-      email_code_expires INTEGER,
-      password_reset_token TEXT,
-      password_reset_expires INTEGER,
-      bypass_2fa BOOLEAN DEFAULT 0,
-      current_token TEXT,
-      dashboard_token TEXT UNIQUE,
-      created_at INTEGER NOT NULL,
-      updated_at INTEGER NOT NULL
-    );
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    two_factor_method TEXT,
+    email_code TEXT,
+    email_code_expires INTEGER,
+    password_reset_token TEXT,
+    password_reset_expires INTEGER,
+    bypass_2fa BOOLEAN DEFAULT 0,
+    current_token TEXT,
+    dashboard_token TEXT UNIQUE,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS user_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    old_username TEXT,
+    old_email TEXT,
+    old_password TEXT,
+    changed_at INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  );
   `);
 }
 initializeDatabase();
@@ -235,18 +240,20 @@ app.post(
       const existingUser = db
         .prepare('SELECT id FROM users WHERE LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)')
         .get(username, email);
-      if (existingUser) return res.status(400).json({ message: 'Username or email is already taken.' });
+      if (existingUser)
+        return res.status(400).json({ message: 'Username or email is already taken.' });
       const hashedPassword = hashPassword(password);
       const timestamp = Date.now();
       const dashboardToken = crypto.randomBytes(32).toString('hex');
-      const result = db.prepare(`
-        INSERT INTO users (username, email, password, two_factor_method, bypass_2fa, dashboard_token, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `).run(username, email, hashedPassword, twoFactorMethod, bypass2FA ? 1 : 0, dashboardToken, timestamp, timestamp);
+      const result = db.prepare(
+        `INSERT INTO users (username, email, password, two_factor_method, bypass_2fa, dashboard_token, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+      ).run(username, email, hashedPassword, twoFactorMethod, bypass2FA ? 1 : 0, dashboardToken, timestamp, timestamp);
       const userId = result.lastInsertRowid;
       if (bypass2FA) {
         const token = generateToken(userId, username);
-        db.prepare('UPDATE users SET current_token = ?, updated_at = ? WHERE id = ?').run(token, Date.now(), userId);
+        db.prepare('UPDATE users SET current_token = ?, updated_at = ? WHERE id = ?')
+          .run(token, Date.now(), userId);
         res.cookie('authToken', token, cookieOptions);
         return res.status(201).json({ message: 'Registration successful.', dashboardToken, token });
       } else {
@@ -291,9 +298,11 @@ app.post(
     try {
       const { username, password, bypass2FA } = req.body;
       const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-      if (!user) return res.status(400).json({ message: 'Invalid credentials.' });
+      if (!user)
+        return res.status(400).json({ message: 'Invalid credentials.' });
       const isPasswordValid = verifyPassword(password, user.password);
-      if (!isPasswordValid) return res.status(400).json({ message: 'Invalid credentials.' });
+      if (!isPasswordValid)
+        return res.status(400).json({ message: 'Invalid credentials.' });
       if (user.two_factor_method === 'email' && !user.bypass_2fa && !bypass2FA) {
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         const expires = Date.now() + 10 * 60 * 1000;
@@ -308,7 +317,8 @@ app.post(
         return res.json({ twoFactorRequired: true, twoFactorMethod: 'email' });
       }
       const token = generateToken(user.id, username);
-      db.prepare('UPDATE users SET current_token = ?, updated_at = ? WHERE id = ?').run(token, Date.now(), user.id);
+      db.prepare('UPDATE users SET current_token = ?, updated_at = ? WHERE id = ?')
+        .run(token, Date.now(), user.id);
       res.cookie('authToken', token, cookieOptions);
       return res.json({ token, dashboardToken: user.dashboard_token });
     } catch (error) {
@@ -334,7 +344,8 @@ app.post(
     try {
       const { username, token } = req.body;
       const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-      if (!user) return res.status(400).json({ message: 'Invalid user.' });
+      if (!user)
+        return res.status(400).json({ message: 'Invalid user.' });
       let is2FAValid = false;
       if (user.two_factor_method === 'email') {
         if (user.email_code === token && user.email_code_expires > Date.now()) {
@@ -343,9 +354,11 @@ app.post(
             .run(Date.now(), user.id);
         }
       }
-      if (!is2FAValid) return res.status(400).json({ message: 'Invalid or expired 2FA token.' });
+      if (!is2FAValid)
+        return res.status(400).json({ message: 'Invalid or expired 2FA token.' });
       const authToken = generateToken(user.id, username);
-      db.prepare('UPDATE users SET current_token = ?, updated_at = ? WHERE id = ?').run(authToken, Date.now(), user.id);
+      db.prepare('UPDATE users SET current_token = ?, updated_at = ? WHERE id = ?')
+        .run(authToken, Date.now(), user.id);
       res.cookie('authToken', authToken, cookieOptions);
       return res.json({ token: authToken, dashboardToken: user.dashboard_token });
     } catch (error) {
@@ -367,13 +380,125 @@ app.post('/api/logout', csrfProtection, authenticateToken, (req, res) => {
   }
 });
 
+app.post('/api/forgot-password', csrfProtection, [body('email').isEmail()], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ message: 'Invalid email address.' });
+  const { email } = req.body;
+  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+  if (!user)
+    return res.status(400).json({ message: 'No account associated with that email.' });
+  const token = crypto.randomBytes(32).toString('hex');
+  const expires = Date.now() + 3600000;
+  db.prepare('UPDATE users SET password_reset_token = ?, password_reset_expires = ?, updated_at = ? WHERE id = ?')
+    .run(token, expires, Date.now(), user.id);
+  const resetUrl = `${req.protocol}://${req.get('host')}/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_USER || 'no-reply@example.com',
+      to: email,
+      subject: 'Password Reset Request',
+      text: `You requested a password reset. Click the link below to reset your password:\n\n${resetUrl}\n\nThis link will expire in 1 hour.`
+    });
+    return res.json({ message: 'Password reset link sent to your email.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Error sending password reset email.' });
+  }
+});
+
+app.get('/reset-password', csrfProtection, (req, res) => {
+  const { token, email } = req.query;
+  if (!token || !email)
+    return res.status(400).send('Invalid password reset link.');
+  res.render('reset-password', { token, email, csrfToken: res.locals.csrfToken });
+});
+
+app.post('/api/reset-password', csrfProtection, [
+  body('email').isEmail(),
+  body('token').notEmpty(),
+  body('password').isLength({ min: 8 }),
+  body('confirmPassword').notEmpty()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ message: 'Validation failed.' });
+  const { email, token, password, confirmPassword } = req.body;
+  if (password !== confirmPassword)
+    return res.status(400).json({ message: 'Passwords do not match.' });
+  const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+  if (!user)
+    return res.status(400).json({ message: 'Invalid email.' });
+  if (user.password_reset_token !== token || user.password_reset_expires < Date.now())
+    return res.status(400).json({ message: 'Invalid or expired reset token.' });
+  const hashedPassword = hashPassword(password);
+  db.prepare('UPDATE users SET password = ?, password_reset_token = NULL, password_reset_expires = NULL, updated_at = ? WHERE id = ?')
+    .run(hashedPassword, Date.now(), user.id);
+  res.json({ message: 'Password reset successful.' });
+});
+
+app.post('/api/settings/update', authenticateToken, csrfProtection, [
+  body('setting').notEmpty(),
+  body('value').notEmpty()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ message: 'Invalid input.' });
+  const { setting, value } = req.body;
+  const userId = req.user.userId;
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  if (!user)
+    return res.status(404).json({ message: 'User not found.' });
+  try {
+    if (setting === 'username') {
+      const existing = db.prepare('SELECT id FROM users WHERE LOWER(username) = LOWER(?)').get(value);
+      if (existing)
+        return res.status(400).json({ message: 'Username is already taken.' });
+      db.prepare(`
+        INSERT INTO user_history (user_id, old_username, old_email, old_password, changed_at)
+        VALUES (?, ?, ?, ?, ?)
+      `).run(user.id, user.username, user.email, user.password, Date.now());
+      db.prepare('UPDATE users SET username = ?, updated_at = ? WHERE id = ?')
+        .run(value, Date.now(), userId);
+      return res.json({ message: 'Username updated successfully.' });
+    }
+    if (setting === 'email') {
+      const existing = db.prepare('SELECT id FROM users WHERE LOWER(email) = LOWER(?)').get(value);
+      if (existing)
+        return res.status(400).json({ message: 'Email is already taken.' });
+      db.prepare(`
+        INSERT INTO user_history (user_id, old_username, old_email, old_password, changed_at)
+        VALUES (?, ?, ?, ?, ?)
+      `).run(user.id, user.username, user.email, user.password, Date.now());
+      db.prepare('UPDATE users SET email = ?, updated_at = ? WHERE id = ?')
+        .run(value, Date.now(), userId);
+      return res.json({ message: 'Email updated successfully.' });
+    }
+    if (setting === 'password') {
+      const hashed = hashPassword(value);
+      db.prepare(`
+        INSERT INTO user_history (user_id, old_username, old_email, old_password, changed_at)
+        VALUES (?, ?, ?, ?, ?)
+      `).run(user.id, user.username, user.email, user.password, Date.now());
+      db.prepare('UPDATE users SET password = ?, updated_at = ? WHERE id = ?')
+        .run(hashed, Date.now(), userId);
+      return res.json({ message: 'Password updated successfully.' });
+    }
+    return res.status(400).json({ message: 'Invalid setting.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Could not update user setting.' });
+  }
+});
+
 app.get('/user/:dashboardToken', authenticateToken, csrfProtection, (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
   const user = db.prepare('SELECT username, email FROM users WHERE dashboard_token = ? AND id = ?')
     .get(req.params.dashboardToken, req.user.userId);
-  if (!user) return res.status(404).json({ message: 'User not found or invalid dashboard token.' });
+  if (!user)
+    return res.status(404).json({ message: 'User not found or invalid dashboard token.' });
   res.render('user-dashboard', { username: user.username, email: user.email, dashboardToken: req.params.dashboardToken, csrfToken: res.locals.csrfToken });
 });
 
@@ -381,7 +506,8 @@ app.get('/dashboard', authenticateToken, csrfProtection, (req, res) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
-  const user = db.prepare('SELECT username, email, dashboard_token FROM users WHERE id = ?').get(req.user.userId);
+  const user = db.prepare('SELECT username, email, dashboard_token FROM users WHERE id = ?')
+    .get(req.user.userId);
   if (!user) return res.redirect('/logged-out?reason=notfound');
   res.render('user-dashboard', { username: user.username, email: user.email, dashboardToken: user.dashboard_token, csrfToken: res.locals.csrfToken });
 });
