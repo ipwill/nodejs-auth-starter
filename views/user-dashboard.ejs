@@ -9,9 +9,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="<%= csrfToken %>">
   <meta name="description" content="User Dashboard">
-  <title>User | Account</title>
+  <title>Account | Home</title>
   <link rel="icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/styles-two.css">
+  <link rel="stylesheet" href="/css/styles.css">
   <script type="module" src="/js/uDashboard.js" defer></script>
 </head>
 
@@ -42,16 +42,15 @@
             <tr>
               <td>
                 <span id="username-display" class="setting-value readonly"><%= username %></span>
-                <button class="icon-button edit-button" id="edit-username">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-                    <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path>
-                  </svg>
-                </button>
               </td>
               <td>
                 <span id="username-value"><%= username %></span>
               </td>
-              <td></td>
+              <td>
+                <button class="icon-button edit-button" id="edit-username">
+                  Edit
+                </button>
+              </td>
             </tr>
             <tr id="username-edit-row" class="edit-row">
               <td colspan="3">
@@ -62,16 +61,15 @@
             <tr>
               <td>
                 <span id="email-display" class="setting-value readonly"><%= email %></span>
-                <button class="icon-button edit-button" id="edit-email">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-                    <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path>
-                  </svg>
-                </button>
               </td>
               <td>
                 <span id="email-value"><%= email %></span>
               </td>
-              <td></td>
+              <td>
+                <button class="icon-button edit-button" id="edit-email">
+                  Edit
+                </button>
+              </td>
             </tr>
             <tr id="email-edit-row" class="edit-row">
               <td colspan="3">
@@ -82,16 +80,15 @@
             <tr>
               <td>
                 <span id="password-display" class="setting-value readonly">********</span>
-                <button class="icon-button edit-button" id="edit-password">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-                    <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path>
-                  </svg>
-                </button>
               </td>
               <td>
                 <span id="password-value">********</span>
               </td>
-              <td></td>
+              <td>
+                <button class="icon-button edit-button" id="edit-password">
+                  Edit
+                </button>
+              </td>
             </tr>
             <tr id="password-edit-row" class="edit-row">
               <td colspan="3">
