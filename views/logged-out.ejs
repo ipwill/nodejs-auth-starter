@@ -1,25 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Logged Out">
-  <title>Logged Out - Developer Mode</title>
+  <title>Logged Out</title>
   <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="/css/styles.css">
+  <script src="/js/bundle.js" defer></script>
 </head>
-
 <body>
-  <div class="logged-out-container developer">
-    <h2>Session Terminated</h2>
+  <div class="logged-out-container">
+    <h2>Error</h2>
     <% if (reason === 'expired') { %>
       <p>Your session expired, or you logged out. Please log in again to continue.</p>
     <% } else { %>
       <p>Error: Not currently logged in. Please log in to access your account.</p>
     <% } %>
-    <a href="/" class="button">Start Over</a>
+    <a href="/" class="button">Go back</a>
   </div>
 </body>
-
 </html>
