@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { showModal, toggleSpinner, validatePassword } from '../public/js/script.js';
+import { toggleSpinner, showModal, validatePassword } from '../public/js/script.js';
 
 const authStorage = {
   store(token, username) {
@@ -215,14 +215,18 @@ const handlers = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const passwordInput = document.getElementById('password');
-  const registerButton = document.getElementById('register-button');
-  const loginButton = document.getElementById('login-button');
-  const verify2FAButton = document.getElementById('verify-2fa-button');
-  const logoutButton = document.getElementById('logout-button');
-  const showRegisterLink = document.getElementById('show-register');
-  const showLoginLink = document.getElementById('show-login');
-  const resendButton = document.getElementById('resend-button');
+  const getEl = id => document.getElementById(id);
+  const registerButton = getEl('register-button');
+  const loginButton = getEl('login-button');
+  const verify2FAButton = getEl('verify-2fa-button');
+  const logoutButton = getEl('logout-button');
+  const showRegisterLink = getEl('show-register');
+  const showLoginLink = getEl('show-login');
+  const passwordInput = getEl('password');
+  const resendButton = getEl('resend-button');
+  const forgotPasswordLink = getEl('forgot-password-link');
+  const backToLoginLink = getEl('back-to-login');
+  const sendResetLinkButton = getEl('send-reset-link');
 
   if (registerButton) registerButton.addEventListener('click', handlers.registerHandler);
   if (loginButton) loginButton.addEventListener('click', handlers.loginHandler);
@@ -231,10 +235,40 @@ document.addEventListener('DOMContentLoaded', () => {
   if (showRegisterLink) showRegisterLink.addEventListener('click', () => formManager.show('register-form'));
   if (showLoginLink) showLoginLink.addEventListener('click', () => formManager.show('login-form'));
   if (passwordInput) passwordInput.addEventListener('input', () => validatePassword(passwordInput.value));
-  if (resendButton) {
-    resendButton.addEventListener('click', async () => {
-      await resend2FACode();
+  if (resendButton) resendButton.addEventListener('click', async () => await resend2FACode());
+  handlers.authenticated();
+
+  if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', e => {
+      e.preventDefault();
+      formManager.show('forgot-password-form');
     });
   }
-  handlers.authenticated();
+  if (backToLoginLink) {
+    backToLoginLink.addEventListener('click', e => {
+      e.preventDefault();
+      formManager.show('login-form');
+    });
+  }
+  if (sendResetLinkButton) {
+    sendResetLinkButton.addEventListener('click', async e => {
+      e.preventDefault();
+      const email = getEl('forgot-email').value.trim();
+      const errorElement = getEl('forgot-password-error');
+      errorElement.textContent = '';
+      if (!email) {
+        errorElement.textContent = 'Please enter your email.';
+        return;
+      }
+      try {
+        toggleSpinner(true, 'send-reset-link');
+        const response = await api.post('forgot-password', { email });
+        errorElement.textContent = response.data.message;
+      } catch (err) {
+        errorElement.textContent = err.response?.data?.message || 'Failed to send reset link.';
+      } finally {
+        toggleSpinner(false, 'send-reset-link');
+      }
+    });
+  }
 });
