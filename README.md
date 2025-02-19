@@ -1,6 +1,6 @@
 # Real-time User Authentication (Vanilla JavaScript)
 
-A simple lightweight (~350KiB) user auth web app that has built-in 2FA (mandatory), password validation, password update/reset and JWT-based authentication. The app comes with a styled responsive frontend UI that comes with dark/light theme support, dynamic user profiles, and more. This project aims to provide a head start for developing custom user authentication in Node.js web apps.
+A simple lightweight (~350KiB) user auth web app that includes built-in 2FA (mandatory), password validation, password update/reset and JWT-based authentication. The app comes with a styled responsive frontend UI that comes with dark/light theme support, dynamic user profiles, and more. This project aims to provide a head start for developing custom user authentication in Node.js web apps.
 
 ## Features:
 
