@@ -14,7 +14,7 @@ A basic user authentication foundation built with vanilla JavaScript, featuring 
 *   **Templates:** `.ejs` UI templates.
 *   **Other:** Helmet for CSRF protection & secure HTTP headers
 
-## Database schema
+## Database schema:
 
 ```sql
 -- Users Table
@@ -47,7 +47,7 @@ CREATE TABLE user_history (
 );
 ```
 
-## API routes
+## API routes:
 
 ### Authentication
 - `POST /api/register` - Register new user
@@ -65,7 +65,7 @@ CREATE TABLE user_history (
 - `GET /user/:dashboardToken` - Access user dashboard
 - `GET /dashboard` - Main dashboard
 
-## Setup
+## Setup:
 
 1.  **Clone:**
     ```bash
@@ -160,24 +160,24 @@ CREATE TABLE user_history (
 
     Access the application at [http://localhost:3000](http://localhost:3000)
 
-## Screenshots
+## Screenshots:
 
 | Login | Register | 2FA Verification |
 |-------|----------|------------------|
 | ![login-ss.png](images/login-ss.png) | ![register-ss.png](images/register-ss.png) | ![2fa-ss.png](images/2fa-ss.png) |
 
-## Dependencies
+## Dependencies:
 
 *   **Backend:** Node.js, Express, Better-SQLite3, JWT, Nodemailer
 *   **Frontend:** Vanilla JavaScript, EJS templates, CSS
 *   **Bundling:** Webpack
 *   **Development:** MailHog (optional)
 
-## Troubleshooting
+## Troubleshooting:
 
 *   **.env configuration:** Ensure `SMTP_HOST=127.0.0.1` is present and uncommented in your `.env` file.
 *   **Build output:** If experiencing issues, run `npm run build`, clear your browser cache, and restart the server.
 
-## License
+## License:
 
 MIT
