@@ -15,6 +15,39 @@ A Node.js authentication system (~350KiB) built with Express and Better-SQLite3,
 - **User Dashboard:** Profile and account management
 - **Rate Limiting:** Request throttling protection
 
+## Requirements
+
+- **Node.js:** 18.x or higher
+- **npm:** 8.x or higher
+- **OpenSSL:** Required for security keys
+- **Memory:** 512MB+ RAM
+- **Storage:** 100MB+ free space
+- **Ports:**
+  - 3000 (app server)
+  - 1025 (MailHog SMTP)
+  - 8025 (MailHog UI)
+- **OS:** Windows 10/11, macOS 10.15+, or Linux (Ubuntu 20.04+, Debian 11+)
+
+## Dependencies
+
+| Category | Package | Version | Purpose |
+|----------|---------|---------|----------|
+| **Core** | express | ^4.18.x | Server |
+| | better-sqlite3 | ^8.6.x | SQLite database |
+| | jsonwebtoken | ^9.0.x | JWT authentication |
+| | nodemailer | ^6.9.x | E-mail service |
+| | dotenv | ^16.3.x | .env support |
+| **Security** | helmet | ^7.0.x | HTTP headers |
+| | express-rate-limit | ^7.1.x | Rate limiting |
+| | csrf | ^3.1.x | CSRF token protection |
+| | cookie-parser | ^1.4.x | Cookie handling |
+| | crypto (built-in) | N/A | Encryption/hashing |
+| **Validation** | express-validator | ^7.0.x | Input validation |
+| **Frontend** | ejs | ^3.1.x | Template engine |
+| | cors | ^2.8.x | CORS middleware |
+| **Development** | nodemon | ^3.0.x | Hot reloading |
+| | mailhog | N/A | 2FA testing |
+
 ## Database schema:
 
 ```sql
@@ -118,7 +151,7 @@ CREATE TABLE user_history (
     openssl rand -hex 16   # ENCRYPTION_IV
     ```
 
-5.  **2FA: MailHog (recommended)**
+4.  **2FA: MailHog (recommended)**
 
     MailHog allows 2FA to work without needing to configure an actual mail server. Choose the installation method that works best for your system:
 
@@ -145,12 +178,12 @@ CREATE TABLE user_history (
 
     Note: For all methods, ensure ports 1025 (SMTP) and 8025 (Web UI) are available.
 
-6.  **Build:**
+5.  **Build:**
     ```bash
     npm run build
     ```
 
-7.  **Start:**
+6.  **Start:**
     ```bash
     # Development (hot reloading)
     npm run dev
@@ -163,16 +196,13 @@ CREATE TABLE user_history (
 
 ## Screenshots:
 
-| Login | Register | 2FA Verification |
-|-------|----------|------------------|
-| ![login-ss.png](images/login-ss.png) | ![register-ss.png](images/register-ss.png) | ![2fa-ss.png](images/2fa-ss.png) |
-
-## Dependencies:
-
-*   **Backend:** Node.js, Express, Better-SQLite3, JWT, Nodemailer
-*   **Frontend:** Vanilla JavaScript, EJS templates, CSS
-*   **Bundling:** Webpack
-*   **Development:** MailHog (optional)
+| Login | Register |
+|-------|----------|
+| ![login-ss.png](images/login-ss.png) | ![register-ss.png](images/register-ss.png) | 
+  
+| Register | 2FA Verification |
+|----------|------------------|
+| ![register-ss.png](images/register-ss.png) | ![2fa-ss.png](images/2fa-ss.png) |
 
 ## Troubleshooting:
 
