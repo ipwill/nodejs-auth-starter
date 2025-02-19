@@ -16,18 +16,6 @@ A foundation for building custom authentication systems in NodeJS using vanilla 
 *   **Security:** Helmet for CSRF protection and secure HTTP headers.
 *   **Configuration:** Webpack configuration included.
 
-**Data Access:**
-
-User data is stored in `better-sqlite3` and can be accessed via standard SQLite queries.
-
-**2FA Notes:**
-
-MailHog is configured for local testing. A production-ready mail server is required for actual deployments.
-
-**JWT (JSON Web Token) Implementation:**
-
-This project utilizes JWT for secure user authentication. Upon successful login, the server issues a JWT to the client. This token is then included in subsequent requests to protected resources, allowing the server to verify the user's identity without requiring repeated authentication.
-
 ## Setup
 
 1. **Clone the repository:**
