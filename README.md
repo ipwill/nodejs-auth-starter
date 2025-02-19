@@ -16,6 +16,57 @@ A basic user authentication foundation built with vanilla JavaScript, featuring 
 *   **Security:** Helmet for CSRF protection and secure HTTP headers.
 *   **Configuration:** Webpack configuration included.
 
+## Database Schema
+
+```sql
+-- Users Table
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    two_factor_method TEXT,
+    email_code TEXT,
+    email_code_expires INTEGER,
+    password_reset_token TEXT,
+    password_reset_expires INTEGER,
+    bypass_2fa BOOLEAN DEFAULT 0,
+    current_token TEXT,
+    dashboard_token TEXT UNIQUE,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL
+);
+
+-- User History Table
+CREATE TABLE user_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    old_username TEXT,
+    old_email TEXT,
+    old_password TEXT,
+    changed_at INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+## API Routes
+
+### Authentication
+- `POST /api/register` - Register new user
+- `POST /api/login` - User login
+- `POST /api/verify-2fa` - Verify 2FA code
+- `POST /api/logout` - User logout
+
+### Password Management
+- `POST /api/forgot-password` - Request password reset
+- `GET /reset-password` - Display password reset form
+- `POST /api/reset-password` - Process password reset
+
+### User Settings
+- `POST /api/settings/update` - Update user settings
+- `GET /user/:dashboardToken` - Access user dashboard
+- `GET /dashboard` - Main dashboard
+
 ## Setup
 
 1.  **Clone:**
@@ -29,26 +80,26 @@ A basic user authentication foundation built with vanilla JavaScript, featuring 
     npm install
     ```
 
-3.  **Configure Environment:**
+3.  **Configure Environment (`.env`)**
 
-    *   Rename `.env-example` to `.env`.
-    *   Populate the `.env` file with secure values.  Use the following commands to generate secrets:
+    *  Rename `.env-example` to `.env` (or create file named `.env` with the contents below)
+    *  Generate the following values for `.env`
 
+    Using terminal (openssl required):  
     ```bash
-    openssl rand -hex 32   # For JWT_SECRET, ENCRYPTION_KEY, and CSRF_SECRET (generate different one for each)
-    openssl rand -hex 16   # For ENCRYPTION_IV
+    openssl rand -hex 32   # JWT_SECRET
+    openssl rand -hex 32   # ENCRYPTION_KEY
+    openssl rand -hex 32   # CSRF_SECRET
+    openssl rand -hex 16   # ENCRYPTION_IV
     ```
 
-    *   **Example `.env`:**
+    *   **Your `.env` file should look like this**
 
     ```env
     # Server Configuration
     PORT=3000
     NODE_ENV=development
-
-    # JWT Secret Key
-    JWT_SECRET=<generated_secret>
-
+    
     # MailHog SMTP Configuration (Local Development)
     SMTP_HOST=127.0.0.1
     SMTP_PORT=1025
@@ -63,71 +114,25 @@ A basic user authentication foundation built with vanilla JavaScript, featuring 
     # Allowed Hosts (Host Header Injection Prevention)
     ALLOWED_HOSTS=localhost:3000,127.0.0.1:3000
 
-    # Encryption Keys
-    ENCRYPTION_KEY=<generated_secret>
-    ENCRYPTION_IV=<generated_iv>
-
-    # CSRF Protection Secret
-    CSRF_SECRET=<generated_secret>
+    # REQUIRED
+    JWT_SECRET=
+    ENCRYPTION_KEY=
+    CSRF_SECRET=
+    ENCRYPTION_IV=
     ```
 
 4.  **2FA (MailHog):**
 
-    *   **Option 1 (Executable):**  Download `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases) (Windows).  For MacOS/Linux, use the script below:
+    Download and run MailHog for your platform:
+    ```bash
+    # Using curl (recommended)
+    curl -s https://raw.githubusercontent.com/mailhog/MailHog/master/scripts/install.sh | sh
 
-        ```bash
-        OS=$(uname -s)
-        ARCH=$(uname -m)
+    # Or using Docker
+    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
+    ```
 
-        if [ "$OS" = "Darwin" ]; then
-            PLATFORM="macOS"
-        elif [ "$OS" = "Linux" ]; then
-            if [ -f /etc/nixos/version ]; then
-                PLATFORM="nixos"
-            else
-                PLATFORM="linux"
-            fi
-        else
-            echo "Unsupported OS. Please install MailHog manually."
-            exit 1
-        fi
-
-        if [ "$ARCH" = "x86_64" ]; then
-            ARCH="amd64"
-        elif [ "$ARCH" = "aarch64" ]; then
-            ARCH="arm"
-        else
-            echo "Unsupported architecture. Please install MailHog manually."
-            exit 1
-        fi
-
-        if [ "$PLATFORM" = "nixos" ]; then
-            echo "Detected NixOS. Installing MailHog via Nix package manager."
-            nix-env -iA nixos.mailhog
-            exit 0
-        fi
-
-        URL="https://github.com/mailhog/MailHog/releases/latest/download/MailHog_${PLATFORM}_${ARCH}"
-
-        kill -9 $(lsof -ti:1025) 2>/dev/null || true
-
-        if ! command -v wget &> /dev/null; then
-            echo "wget not found. Installing..."
-            nix-env -iA nixos.wget
-        fi
-
-        mkdir -p ~/bin && wget -qO ~/bin/MailHog "$URL" && chmod +x ~/bin/MailHog && ~/bin/MailHog
-        ```
-
-    *   **Option 2 (Docker):**
-
-        ```bash
-        docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
-        ```
-
-    *   Access MailHog UI: [http://localhost:8025](http://localhost:8025)
-
-        ![mailhog-ui-ss.png](images/mailhog-ui-ss.png)
+    Access MailHog UI: [http://localhost:8025](http://localhost:8025)
 
 5.  **Build:**
     ```bash
@@ -147,11 +152,9 @@ A basic user authentication foundation built with vanilla JavaScript, featuring 
 
 ## Screenshots
 
-![login-ss.png](images/login-ss.png)
-
-![register-ss.png](images/register-ss.png)
-
-![2fa-ss.png](images/2fa-ss.png)
+| Login | Register | 2FA Verification |
+|-------|----------|------------------|
+| ![login-ss.png](images/login-ss.png) | ![register-ss.png](images/register-ss.png) | ![2fa-ss.png](images/2fa-ss.png) |
 
 ## Dependencies
 
