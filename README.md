@@ -185,13 +185,13 @@ CREATE TABLE user_history (
 
 ## Screenshots:
 
-| Login | Register |
+| Login (light) | Register (light) |
 |-------|----------|
-| ![login-ss.png](images/login-ss.png) | ![register-ss.png](images/register-ss.png) | 
+| ![light-login.png](images/light-login.png) | ![light-register.png](images/light-register.png) | 
   
-| Register | 2FA Verification |
+| Login (dark) | Register (dark) |
 |----------|------------------|
-| ![register-ss.png](images/register-ss.png) | ![2fa-ss.png](images/2fa-ss.png) |
+| ![dark-login.png](images/dark-login.png) | ![dark-register.png](images/dark-register.png) |
 
 ## Troubleshooting:
 
