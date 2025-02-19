@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { toggleSpinner, showModal, validatePassword } from '../public/js/script.js';
+import { toggleSpinner, showModal, validatePassword } from '/public/js/script.js';
 
 const authStorage = {
   store(token, username) {
@@ -159,6 +159,7 @@ const handlers = {
     const errorElement = document.getElementById('2fa-error');
     errorElement.textContent = '';
     const username = authStorage.getTempUsername();
+
     if (!username || !token) {
       errorElement.textContent = 'Verification failed. Please try logging in again.';
       return;
@@ -227,6 +228,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const forgotPasswordLink = getEl('forgot-password-link');
   const backToLoginLink = getEl('back-to-login');
   const sendResetLinkButton = getEl('send-reset-link');
+  const themeToggleButton = document.getElementById('theme-toggle');
+
+  function switchTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+
+    if (newTheme === 'dark') {
+      themeToggleButton.querySelector('svg').innerHTML = `
+        <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+      `;
+    } else {
+      themeToggleButton.querySelector('svg').innerHTML = `
+        <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
+      `;
+    }
+  }
+
+  const initialTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', initialTheme);
+
+  if (themeToggleButton) {
+    if (initialTheme === 'dark') {
+      themeToggleButton.querySelector('svg').innerHTML = `
+        <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
+      `;
+    }
+
+    themeToggleButton.addEventListener('click', switchTheme);
+  }
 
   if (registerButton) registerButton.addEventListener('click', handlers.registerHandler);
   if (loginButton) loginButton.addEventListener('click', handlers.loginHandler);
