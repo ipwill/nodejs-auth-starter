@@ -1,112 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="csrf-token" content="<%= csrfToken %>">
   <meta name="description" content="User Dashboard">
-  <title>Account | Home</title>
-  <link rel="icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/styles.css">
-  <script type="module" src="/js/uDashboard.js" defer></script>
+  <title>Account Settings</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/bundle.js" defer></script>
+  <script src="/js/uDashboard.js" defer></script>
 </head>
-
 <body>
   <div class="dashboard">
     <div class="header">
       <div class="welcome">
-        Welcome, <span><%= username %>!</span>
+        <h4 class="text-div">Account Settings</h4>
+        <div id="datetime" class="sub-label"></div>
       </div>
-      <div class="header-actions">
+      <div class="icon-bar">
+        <button id="theme-toggle" class="icon-button">
+          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
+          </svg>
+        </button>
         <button id="logout-button" class="logout-button">
           <span class="button-content">Logout</span>
         </button>
       </div>
     </div>
-
-    <div id="dashboard-section">
-      <div class="table-container">
-        <table class="dashboard-table">
-          <thead>
-            <tr>
-              <th>Account Information</th>
-              <th>Value</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <span id="username-display" class="setting-value readonly"><%= username %></span>
-              </td>
-              <td>
-                <span id="username-value"><%= username %></span>
-              </td>
-              <td>
-                <button class="icon-button edit-button" id="edit-username">
-                  Edit
-                </button>
-              </td>
-            </tr>
-            <tr id="username-edit-row" class="edit-row">
-              <td colspan="3">
-                <input type="text" id="new-username" placeholder="New Username" value="<%= username %>">
-                <button id="save-username" class="button">Save</button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span id="email-display" class="setting-value readonly"><%= email %></span>
-              </td>
-              <td>
-                <span id="email-value"><%= email %></span>
-              </td>
-              <td>
-                <button class="icon-button edit-button" id="edit-email">
-                  Edit
-                </button>
-              </td>
-            </tr>
-            <tr id="email-edit-row" class="edit-row">
-              <td colspan="3">
-                <input type="email" id="new-email" placeholder="New Email" value="<%= email %>">
-                <button id="save-email" class="button">Save</button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span id="password-display" class="setting-value readonly">********</span>
-              </td>
-              <td>
-                <span id="password-value">********</span>
-              </td>
-              <td>
-                <button class="icon-button edit-button" id="edit-password">
-                  Edit
-                </button>
-              </td>
-            </tr>
-            <tr id="password-edit-row" class="edit-row">
-              <td colspan="3">
-                <input type="password" id="new-password" placeholder="New Password">
-                <input type="password" id="confirm-password" placeholder="Confirm New Password">
-                <button id="save-password" class="button">Save</button>
-              </td>
-            </tr>
-            <tr>
-              <td>Dashboard URL</td>
-              <td><%= dashboardToken %></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="settings-table">
+      <table>
+        <tr data-setting="username">
+          <td class="setting-label">Username</td>
+          <td class="setting-value">
+            <span class="display-value"><%= username %></span>
+            <input type="text" class="edit-input hidden" value="<%= username %>">
+          </td>
+          <td class="setting-edit">
+            <button class="edit-button" data-setting="username">
+              <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Z"></path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr data-setting="password">
+          <td class="setting-label">Password</td>
+          <td class="setting-value">
+            <span class="display-value">••••••••</span>
+            <input type="password" class="edit-input hidden" placeholder="New password">
+            <input type="password" class="edit-input hidden" placeholder="Confirm password">
+          </td>
+          <td class="setting-edit">
+            <button class="edit-button" data-setting="password">
+              <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Z"></path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr data-setting="email">
+          <td class="setting-label">Email</td>
+          <td class="setting-value">
+            <span class="display-value"><%= email %></span>
+            <input type="email" class="edit-input hidden" value="<%= email %>">
+          </td>
+          <td class="setting-edit">
+            <button class="edit-button" data-setting="email">
+              <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+                <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Z"></path>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td class="setting-label">Profile URL</td>
+          <td class="setting-value"><%= dashboardToken %></td>
+          <td class="setting-edit"></td>
+        </tr>
+      </table>
+    </div>
+    <div class="status-bar">
+      <span id="user-info">Logged in as <%= username %></span>
     </div>
   </div>
 </body>
-
 </html>
