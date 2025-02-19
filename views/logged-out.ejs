@@ -1,23 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Logged Out">
   <title>Logged Out</title>
   <link rel="icon" href="/favicon.ico">
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/style.css">
   <script src="/js/bundle.js" defer></script>
 </head>
+
 <body>
-  <div class="logged-out-container">
-    <h2>Error</h2>
-    <% if (reason === 'expired') { %>
-      <p>Your session expired, or you logged out. Please log in again to continue.</p>
-    <% } else { %>
-      <p>Error: Not currently logged in. Please log in to access your account.</p>
-    <% } %>
-    <a href="/" class="button">Go back</a>
+  <div class="container">
+    <div class="form-section active">
+      <h4 class="text-div">Session Ended</h4>
+      <% if (reason==='expired' ) { %>
+        <p class="sub-heading">Your session has expired or you have been logged out. Please log in again to continue.
+        </p>
+        <% } else { %>
+          <p class="sub-heading">You are not currently logged in. Please log in to access your account.</p>
+          <% } %>
+            <button onclick="window.location.href='/'">
+              <span class="button-content">Back to Login</span>
+            </button>
+    </div>
   </div>
 </body>
+
 </html>
