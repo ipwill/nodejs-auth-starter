@@ -151,39 +151,28 @@ CREATE TABLE user_history (
     openssl rand -hex 16   # ENCRYPTION_IV
     ```
 
-4.  **2FA: MailHog (recommended)**
+4.  **2FA: MailHog (required)**
 
-    MailHog allows 2FA to work without needing to configure an actual mail server. Choose the installation method that works best for your system:
-
-    **Option 1:** Binary (Windows)
-    - Download the latest `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases)
-    - Double-click to run
-
-    **Option 2:** Docker (Windows/macOS/Linux)
-    ```bash
-    docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
+    One-liner commands that download and run MailHog
+    
+    a) **Windows (Powershell):**
+    ```powershell
+    Invoke-WebRequest -Uri "https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_windows_amd64.exe" -OutFile "mailhog.exe" ; Start-Process -FilePath ".\mailhog.exe"
     ```
 
-    **Option 3:** GO (Windows/macOS/Linux)
+    b) **macOS/Linux/Unix (terminal):**
     ```bash
-    go install github.com/mailhog/MailHog@latest
-    ```
-      
-    **Option 4:** One-liner command to download/run (macOS/Linux) **[recommended]**
-    ```bash
-    curl -L $(curl -s https://api.github.com/repos/mailhog/MailHog/releases/latest | grep browser_download_url | grep $(uname -s)_$(uname -m) | cut -d '"' -f 4) -o ~/mailhog && chmod +x ~/mailhog && ~/mailhog
+    curl -L "https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_$(uname -s | tr '[:upper:]' '[:lower:]')_amd64" -o ~/mailhog && chmod +x ~/mailhog && ~/mailhog
     ```
 
-    Once installed, access the MailHog UI at: [http://localhost:8025](http://localhost:8025)
+    Note: Access MailHog UI at [http://localhost:8025](http://localhost:8025) after installation
 
-    Note: For all methods, ensure ports 1025 (SMTP) and 8025 (Web UI) are available.
-
-5.  **Build:**
+6.  **Build:**
     ```bash
     npm run build
     ```
 
-6.  **Start:**
+7.  **Start:**
     ```bash
     # Development (hot reloading)
     npm run dev
