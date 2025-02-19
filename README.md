@@ -1,6 +1,6 @@
 # Real-time User Authentication (Vanilla JavaScript)
 
-A basic user authentication foundation built with vanilla JavaScript, featuring built-in 2FA support, secure password hashing, and token-based flows. It includes a pre-styled front end with light and dark themes and uses a built-in better-sqlite3 database for user data. Designed to be lightweight (~350KiB) and unopinionated, providing a head start for developing custom user authentication in Node.js web apps.
+A basic user authentication foundation built with vanilla JavaScript, featuring built-in 2FA support, secure password hashing, and JWT-based authentication. It includes a pre-styled front end with light and dark themes and uses a built-in better-sqlite3 database for user data. Designed to be lightweight (~350KiB) and unopinionated, this project aims to provide a head start for developing custom user authentication in Node.js web apps.
 
 **Key Features:**
 
