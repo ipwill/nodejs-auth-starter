@@ -1,18 +1,19 @@
 # Real-time User Authentication (Vanilla JavaScript)
 
-A simple lightweight (~350KiB) user auth web app that includes built-in 2FA (mandatory), password validation, password update/reset and JWT-based authentication. The app comes with a styled responsive frontend UI that comes with dark/light theme support, dynamic user profiles, and more. This project aims to provide a head start for developing custom user authentication in Node.js web apps.
+A Node.js authentication system (~350KiB) built with Express and Better-SQLite3, featuring mandatory email-based 2FA, JWT authentication, and CSRF protection via Helmet. Includes a webpack-bundled frontend with EJS templates, real-time state management, and responsive UI components. The SQLite database handles user sessions, password reset tokens, and account history tracking. Supports secure HTTP headers, rate limiting, and CORS configuration for production deployment.
 
-## Features:
+## Features
 
-*   **Database:** `better-sqlite3` for user data (required)
-*   **2FA:** 
-*   **Frontend:** Styled UI (light/dark theme)
-*   **Bundler:** Webpack for client-side assets (bundle.js)
-*   **User account page** Dynamic user dashboard creation
-*   **Authentication:** Secure JWT login (JSON Web Token)
-*   **Email 2FA:** Mandatory multi-factor authentication
-*   **Templates:** `.ejs` UI templates
-*   **Other:** Helmet for CSRF protection & secure HTTP headers
+- **SQLite Database:** `better-sqlite3` for user data persistence
+- **JWT Authentication:** Token-based secure authentication
+- **Mandatory 2FA:** Email-based verification system
+- **Security Headers:** Helmet.js for CSRF and HTTP security
+- **Asset Bundling:** Webpack 5 for client-side optimization
+- **Template Engine:** EJS for server-side rendering
+- **Dynamic UI:** Responsive layout with theme switching
+- **State Management:** Real-time updates without frameworks
+- **User Dashboard:** Profile and account management
+- **Rate Limiting:** Request throttling protection
 
 ## Database schema:
 
