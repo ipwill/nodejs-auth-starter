@@ -2,21 +2,19 @@
 
 A basic user authentication foundation built with vanilla JavaScript, featuring built-in 2FA support, secure password hashing, and JWT-based authentication. It includes a pre-styled front end with light and dark themes and uses a built-in better-sqlite3 database for user data. Designed to be lightweight (~350KiB) and unopinionated, this project aims to provide a head start for developing custom user authentication in Node.js web apps.
 
-**Key Features:**
+## Features:
 
-*   **Database:** `better-sqlite3` for local user data storage.
-*   **2FA:** Implemented with MailHog for testing. Production requires a real mail server.
-*   **Security:** Includes hardening middleware.
-*   **Frontend:** Styled UI with light/dark themes.
-*   **Bundler:** Webpack for client-side assets.
-*   **User Dashboard:** Dynamic URL generation.
-*   **Authentication:** Secure login with JWT (JSON Web Token) authentication.
-*   **Email 2FA:** Pre-issued token verification.
+*   **Database:** `better-sqlite3` for user data (required)
+*   **2FA:** 
+*   **Frontend:** Styled UI (light/dark theme)
+*   **Bundler:** Webpack for client-side assets (bundle.js)
+*   **User account page** Dynamic user dashboard creation
+*   **Authentication:** Secure JWT login (JSON Web Token)
+*   **Email 2FA:** Pre-issued token verification (MailHog works for testing 2fa. Actual mail server will be needed for production usage)
 *   **Templates:** `.ejs` UI templates.
-*   **Security:** Helmet for CSRF protection and secure HTTP headers.
-*   **Configuration:** Webpack configuration included.
+*   **Other:** Helmet for CSRF protection & secure HTTP headers
 
-## Database Schema
+## Database schema
 
 ```sql
 -- Users Table
@@ -49,7 +47,7 @@ CREATE TABLE user_history (
 );
 ```
 
-## API Routes
+## API routes
 
 ### Authentication
 - `POST /api/register` - Register new user
@@ -57,12 +55,12 @@ CREATE TABLE user_history (
 - `POST /api/verify-2fa` - Verify 2FA code
 - `POST /api/logout` - User logout
 
-### Password Management
+### Password management
 - `POST /api/forgot-password` - Request password reset
 - `GET /reset-password` - Display password reset form
 - `POST /api/reset-password` - Process password reset
 
-### User Settings
+### User settings
 - `POST /api/settings/update` - Update user settings
 - `GET /user/:dashboardToken` - Access user dashboard
 - `GET /dashboard` - Main dashboard
@@ -80,20 +78,9 @@ CREATE TABLE user_history (
     npm install
     ```
 
-3.  **Configure Environment (`.env`)**
+3.  **Configure environment (`.env`)**
 
-    *  Rename `.env-example` to `.env` (or create file named `.env` with the contents below)
-    *  Generate the following values for `.env`
-
-    Using terminal (openssl required):  
-    ```bash
-    openssl rand -hex 32   # JWT_SECRET
-    openssl rand -hex 32   # ENCRYPTION_KEY
-    openssl rand -hex 32   # CSRF_SECRET
-    openssl rand -hex 16   # ENCRYPTION_IV
-    ```
-
-    *   **Your `.env` file should look like this**
+    **(Required)** Rename `.env-example` to `.env` (or create file named `.env` with the contents below)
 
     ```env
     # Server Configuration
@@ -121,25 +108,48 @@ CREATE TABLE user_history (
     ENCRYPTION_IV=
     ```
 
-4.  **2FA (MailHog):**
-
-    Download and run MailHog for your platform:
+    **(Required)** Generate the following values for the values at the end of the `.env`
     ```bash
-    # Using curl (recommended)
-    curl -s https://raw.githubusercontent.com/mailhog/MailHog/master/scripts/install.sh | sh
+    # run in terminal (openssl will need to be installed)
+    openssl rand -hex 32   # JWT_SECRET
+    openssl rand -hex 32   # ENCRYPTION_KEY
+    openssl rand -hex 32   # CSRF_SECRET
+    openssl rand -hex 16   # ENCRYPTION_IV
+    ```
 
-    # Or using Docker
+5.  **2FA: MailHog (recommended)**
+
+    MailHog allows 2FA to work without needing to configure an actual mail server. Choose the installation method that works best for your system:
+
+    **Option 1:** Binary (Windows)
+    - Download the latest `MailHog.exe` from [MailHog Releases](https://github.com/mailhog/MailHog/releases)
+    - Double-click to run
+
+    **Option 2:** Docker (Windows/macOS/Linux)
+    ```bash
     docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
     ```
 
-    Access MailHog UI: [http://localhost:8025](http://localhost:8025)
+    **Option 3:** GO (Windows/macOS/Linux)
+    ```bash
+    go install github.com/mailhog/MailHog@latest
+    ```
+      
+    **Option 4:** One-liner command to download/run (macOS/Linux) **[recommended]**
+    ```bash
+    curl -L $(curl -s https://api.github.com/repos/mailhog/MailHog/releases/latest | grep browser_download_url | grep $(uname -s)_$(uname -m) | cut -d '"' -f 4) -o ~/mailhog && chmod +x ~/mailhog && ~/mailhog
+    ```
 
-5.  **Build:**
+    Once installed, access the MailHog UI at: [http://localhost:8025](http://localhost:8025)
+
+    Note: For all methods, ensure ports 1025 (SMTP) and 8025 (Web UI) are available.
+
+6.  **Build:**
     ```bash
     npm run build
     ```
 
-6.  **Start:**
+7.  **Start:**
     ```bash
     # Development (hot reloading)
     npm run dev
@@ -148,7 +158,7 @@ CREATE TABLE user_history (
     npm start
     ```
 
-    Access the application at [http://localhost:3000](http://localhost:3000).
+    Access the application at [http://localhost:3000](http://localhost:3000)
 
 ## Screenshots
 
@@ -165,8 +175,8 @@ CREATE TABLE user_history (
 
 ## Troubleshooting
 
-*   **.env Configuration:** Ensure `SMTP_HOST=127.0.0.1` is present and uncommented in your `.env` file.
-*   **Build Output:** If experiencing issues, run `npm run build`, clear your browser cache, and restart the server.
+*   **.env configuration:** Ensure `SMTP_HOST=127.0.0.1` is present and uncommented in your `.env` file.
+*   **Build output:** If experiencing issues, run `npm run build`, clear your browser cache, and restart the server.
 
 ## License
 
