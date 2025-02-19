@@ -1,6 +1,6 @@
 # Real-time User Authentication (Vanilla JavaScript)
 
-A basic user authentication foundation built with vanilla JavaScript, featuring built-in 2FA support, secure password hashing, and JWT-based authentication. It includes a pre-styled front end with light and dark themes and uses a built-in better-sqlite3 database for user data. Designed to be lightweight (~350KiB) and unopinionated, this project aims to provide a head start for developing custom user authentication in Node.js web apps.
+A simple lightweight (~350KiB) user auth web app that has built-in 2FA (mandatory), password validation, password update/reset and JWT-based authentication. The app comes with a styled responsive frontend UI that comes with dark/light theme support, dynamic user profiles, and more. This project aims to provide a head start for developing custom user authentication in Node.js web apps.
 
 ## Features:
 
@@ -10,8 +10,8 @@ A basic user authentication foundation built with vanilla JavaScript, featuring 
 *   **Bundler:** Webpack for client-side assets (bundle.js)
 *   **User account page** Dynamic user dashboard creation
 *   **Authentication:** Secure JWT login (JSON Web Token)
-*   **Email 2FA:** Pre-issued token verification (MailHog works for testing 2fa. Actual mail server will be needed for production usage)
-*   **Templates:** `.ejs` UI templates.
+*   **Email 2FA:** Mandatory multi-factor authentication
+*   **Templates:** `.ejs` UI templates
 *   **Other:** Helmet for CSRF protection & secure HTTP headers
 
 ## Database schema:
