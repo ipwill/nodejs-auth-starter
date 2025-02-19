@@ -1,15 +1,32 @@
-## NodeJS Auth (2FA)
-Real-time user authentication built with vanilla javascript. This is meant to be used as a headstart when building custom auth for NodeJS applications. Includes database, 2FA, hardened middleware to boost security, styled frontend with Light/Dark theme support, and more. **Database:**The app stores user data using a simple SQLite, and bundles client-side code with Webpack. 2FA works using MailHog (testing purposes only) and all setup instructions can be found below. For actual use, a real mail server  must be setup for 2FA to work correctly.
+# Real-time User Authentication (Vanilla JavaScript)
 
-## Features
+A foundation for building custom authentication systems in NodeJS using vanilla JavaScript.
 
-- User dashboard with dynamic URL generation
-- Login page with secure login (JWT auth)
-- Email 2FA verification pre-issued tokens
-- SQLite database
-- .ejs UI templates
-- Helmet CSRF protection and secure HTTP headers
-- Webpack config
+**Key Features:**
+
+*   **Database:** `better-sqlite3` for local user data storage.
+*   **2FA:** Implemented with MailHog for testing. Production requires a real mail server.
+*   **Security:** Includes hardening middleware.
+*   **Frontend:** Styled UI with light/dark themes.
+*   **Bundler:** Webpack for client-side assets.
+*   **User Dashboard:** Dynamic URL generation.
+*   **Authentication:** Secure login with JWT (JSON Web Token) authentication.
+*   **Email 2FA:** Pre-issued token verification.
+*   **Templates:** `.ejs` UI templates.
+*   **Security:** Helmet for CSRF protection and secure HTTP headers.
+*   **Configuration:** Webpack configuration included.
+
+**Data Access:**
+
+User data is stored in `better-sqlite3` and can be accessed via standard SQLite queries.
+
+**2FA Notes:**
+
+MailHog is configured for local testing. A production-ready mail server is required for actual deployments.
+
+**JWT (JSON Web Token) Implementation:**
+
+This project utilizes JWT for secure user authentication. Upon successful login, the server issues a JWT to the client. This token is then included in subsequent requests to protected resources, allowing the server to verify the user's identity without requiring repeated authentication.
 
 ## Setup
 
