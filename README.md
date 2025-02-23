@@ -20,8 +20,6 @@ A Node.js authentication system (~35KiB) built with Express and Better-SQLite3, 
 - **Node.js:** 18.x or higher
 - **npm:** 8.x or higher
 - **OpenSSL:** Required for security keys
-- **Memory:** 512MB+ RAM
-- **Storage:** 100MB+ free space
 - **Ports:**
   - 3000 (app server)
   - 1025 (MailHog SMTP)
