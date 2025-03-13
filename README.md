@@ -160,7 +160,7 @@ CREATE TABLE user_history (
 
     b) **macOS/Linux/Unix (terminal):**
     ```bash
-    curl -L -o mailhog https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_linux_amd64 && chmod +x mailhog && ./mailhog
+    curl -k -L -o mailhog https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_linux_amd64 && chmod +x mailhog && ./mailhog
     ```
 
     Note: Access MailHog UI at [http://localhost:8025](http://localhost:8025) after installation
