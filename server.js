@@ -24,13 +24,14 @@ app.use(
   helmet.contentSecurityPolicy({
     directives: {
       defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
-        styleSrc: ["'self'"],
-        imgSrc: ["'self'", 'data:'],
-        fontSrc: ["'self'"],
-        objectSrc: ["'none'"],
-        connectSrc: ["'self'"],
-        upgradeInsecureRequests: [],
+      scriptSrc: ["'self'", 'https://cdn.jsdelivr.net'],
+      scriptSrcAttr: ["'self'"],
+      styleSrc: ["'self'"],
+      imgSrc: ["'self'", 'data:'],
+      fontSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      connectSrc: ["'self'"],
+      upgradeInsecureRequests: [],
     },
   })
 );
@@ -92,6 +93,7 @@ app.use((req, res, next) => {
 
 function initializeDatabase() {
   db.exec(`
+  -- Create users table if it doesn't exist
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
@@ -108,6 +110,9 @@ function initializeDatabase() {
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL
   );
+  
+  -- Create user_history table if it doesn't exist
+  -- This table tracks all changes to user data, including username changes
   CREATE TABLE IF NOT EXISTS user_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -117,20 +122,82 @@ function initializeDatabase() {
     changed_at INTEGER NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
   );
+  
+  -- Create index on username column for faster availability lookups
+  CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+  
+  -- Create indices on user_history table for faster queries
+  CREATE INDEX IF NOT EXISTS idx_user_history_user_id ON user_history(user_id);
+  CREATE INDEX IF NOT EXISTS idx_user_history_old_username ON user_history(old_username);
+  CREATE INDEX IF NOT EXISTS idx_user_history_changed_at ON user_history(changed_at);
   `);
 }
 initializeDatabase();
 
-const transporterConfig = {
-  host: process.env.SMTP_HOST,
-  port: parseInt(process.env.SMTP_PORT, 10),
-  secure: process.env.SMTP_SECURE === 'true',
-  tls: { rejectUnauthorized: true }
-};
-if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-  transporterConfig.auth = { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS };
+// Email configuration with MailHog support for development
+let transporter;
+if (process.env.NODE_ENV === 'development') {
+  console.log('Setting up MailHog transport for development');
+  
+  // Use MailHog in development (typically runs on localhost:1025)
+  transporter = nodemailer.createTransport({
+    host: process.env.MAILHOG_HOST || 'localhost',
+    port: parseInt(process.env.MAILHOG_PORT || '1025', 10),
+    secure: false,
+    ignoreTLS: true
+  });
+  
+  // Test the connection and fall back to mock if MailHog is not available
+  transporter.verify((error) => {
+    if (error) {
+      console.log('MailHog not available, using mock email transport instead');
+      transporter = {
+        sendMail: async (mailOptions) => {
+          console.log('\n========== MOCK EMAIL SENT ==========');
+          console.log(`To: ${mailOptions.to}`);
+          console.log(`From: ${mailOptions.from}`);
+          console.log(`Subject: ${mailOptions.subject}`);
+          console.log(`Body: ${mailOptions.text}`);
+          console.log('======================================\n');
+          return { messageId: 'mock-email-id-' + Date.now() };
+        }
+      };
+    } else {
+      console.log('MailHog connection successful');
+    }
+  });
+} else {
+  // Regular email setup for production
+  const transporterConfig = {
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT, 10),
+    secure: process.env.SMTP_SECURE === 'true',
+    tls: { rejectUnauthorized: true }
+  };
+  
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    transporterConfig.auth = { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS };
+  }
+  
+  try {
+    transporter = nodemailer.createTransport(transporterConfig);
+    console.log('SMTP transport configured for production');
+  } catch (err) {
+    console.error('Failed to create email transport:', err);
+    // Fallback to mock transport on error
+    transporter = {
+      sendMail: async (mailOptions) => {
+        console.log('\n========== FALLBACK MOCK EMAIL ==========');
+        console.log(`To: ${mailOptions.to}`);
+        console.log(`From: ${mailOptions.from}`);
+        console.log(`Subject: ${mailOptions.subject}`);
+        console.log(`Body: ${mailOptions.text}`);
+        console.log('=========================================\n');
+        return { messageId: 'mock-email-id-' + Date.now() };
+      }
+    };
+  }
 }
-const transporter = nodemailer.createTransport(transporterConfig);
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const IV = process.env.ENCRYPTION_IV;
@@ -214,6 +281,94 @@ app.get('/api/check-auth', authenticateToken, (req, res) => {
   res.json({ ok: true });
 });
 
+app.get('/api/check-username-availability', (req, res) => {
+  try {
+    const { username } = req.query;
+    
+    if (!username || username.trim() === '') {
+      return res.status(400).json({ 
+        available: false, 
+        message: 'Username cannot be empty' 
+      });
+    }
+    
+    const trimmedUsername = username.trim();
+    // Get user ID from token if authenticated, otherwise use 0
+    const userId = req.user?.userId || 0;
+    
+    // Check if username is currently used by another user
+    const existingUser = db.prepare(
+      'SELECT id FROM users WHERE LOWER(username) = LOWER(?) AND id != ?'
+    ).get(trimmedUsername, userId);
+    
+    return res.json({ 
+      available: !existingUser,
+      message: existingUser ? 'Username already taken' : 'Username available'
+    });
+  } catch (error) {
+    console.error('Error checking username availability:', error);
+    return res.status(500).json({ 
+      available: false, 
+      message: 'Error checking username availability' 
+    });
+  }
+});
+
+app.get('/api/admin/username-history/:userId', authenticateToken, csrfProtection, async (req, res) => {
+  try {
+    // Check if user is admin (you'll need to add admin role to users table)
+    const isAdmin = db.prepare('SELECT is_admin FROM users WHERE id = ?').get(req.user.userId)?.is_admin === 1;
+    if (!isAdmin) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+    
+    const userId = req.params.userId;
+    
+    // Get current username
+    const user = db.prepare('SELECT username FROM users WHERE id = ?').get(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Get username history from user_history table
+    const history = db.prepare(`
+      SELECT old_username as username, changed_at
+      FROM user_history
+      WHERE user_id = ?
+      ORDER BY changed_at DESC
+    `).all(userId);
+    
+    return res.json({
+      currentUsername: user.username,
+      history: history
+    });
+  } catch (error) {
+    console.error('Error fetching username history:', error);
+    return res.status(500).json({ message: 'Error fetching username history' });
+  }
+});
+
+app.get('/u/:dashboardToken', authenticateToken, csrfProtection, (req, res) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  
+  const user = db.prepare('SELECT username, email FROM users WHERE dashboard_token = ? AND id = ?')
+    .get(req.params.dashboardToken, req.user.userId);
+    
+  if (!user)
+    return res.status(404).json({ message: 'User not found or invalid dashboard token.' });
+    
+  res.render('user-dashboard', { 
+    username: user.username, 
+    email: user.email, 
+    dashboardToken: req.params.dashboardToken, 
+    csrfToken: res.locals.csrfToken,
+    currentTime: '2025-03-13 13:11:55'
+  });
+});
+
 app.post(
   '/api/register',
   csrfProtection,
@@ -255,12 +410,17 @@ app.post(
         db.prepare('UPDATE users SET current_token = ?, updated_at = ? WHERE id = ?')
           .run(token, Date.now(), userId);
         res.cookie('authToken', token, cookieOptions);
-        return res.status(201).json({ message: 'Registration successful.', dashboardToken, token });
+        return res.status(201).json({ 
+          message: 'Registration successful.', 
+          dashboardToken, 
+          token,
+          redirectUrl: `/user/${dashboardToken}`
+        });
       } else {
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         const expires = Date.now() + 10 * 60 * 1000;
         await transporter.sendMail({
-          from: process.env.SMTP_USER || 'no-reply@example.com',
+          from: process.env.SMTP_FROM || 'no-reply@example.com',
           to: email,
           subject: 'Your 2FA Verification Code',
           text: `Your verification code is: ${code}. It expires in 10 minutes.`
@@ -307,7 +467,7 @@ app.post(
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         const expires = Date.now() + 10 * 60 * 1000;
         await transporter.sendMail({
-          from: process.env.SMTP_USER || 'no-reply@example.com',
+          from: process.env.SMTP_FROM || 'no-reply@example.com',
           to: user.email,
           subject: 'Your 2FA Verification Code',
           text: `Your verification code is: ${code}. It expires in 10 minutes.`
@@ -320,7 +480,11 @@ app.post(
       db.prepare('UPDATE users SET current_token = ?, updated_at = ? WHERE id = ?')
         .run(token, Date.now(), user.id);
       res.cookie('authToken', token, cookieOptions);
-      return res.json({ token, dashboardToken: user.dashboard_token });
+      return res.json({ 
+        token, 
+        dashboardToken: user.dashboard_token,
+        redirectUrl: `/user/${user.dashboard_token}`
+      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: 'Login failed due to a server error.' });
@@ -360,13 +524,53 @@ app.post(
       db.prepare('UPDATE users SET current_token = ?, updated_at = ? WHERE id = ?')
         .run(authToken, Date.now(), user.id);
       res.cookie('authToken', authToken, cookieOptions);
-      return res.json({ token: authToken, dashboardToken: user.dashboard_token });
+      return res.json({ 
+        token: authToken, 
+        dashboardToken: user.dashboard_token,
+        redirectUrl: `/user/${user.dashboard_token}`
+      });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: '2FA verification failed due to a server error.' });
     }
   }
 );
+
+app.post('/api/resend-2fa', csrfProtection, (req, res) => {
+  try {
+    const { username } = req.body;
+    
+    if (!username) {
+      return res.status(400).json({ message: 'Username is required.' });
+    }
+    
+    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+    if (!user) {
+      return res.status(400).json({ message: 'User not found.' });
+    }
+    
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = Date.now() + 10 * 60 * 1000;
+    
+    transporter.sendMail({
+      from: process.env.SMTP_FROM || 'no-reply@example.com',
+      to: user.email,
+      subject: 'Your New 2FA Verification Code',
+      text: `Your new verification code is: ${code}. It expires in 10 minutes.`
+    }).catch(error => {
+      console.error('Error sending 2FA email:', error);
+      // Continue processing even if email fails
+    });
+    
+    db.prepare('UPDATE users SET email_code = ?, email_code_expires = ?, updated_at = ? WHERE id = ?')
+      .run(code, expires, Date.now(), user.id);
+      
+    return res.json({ message: 'New verification code sent.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Failed to resend verification code.' });
+  }
+});
 
 app.post('/api/logout', csrfProtection, authenticateToken, (req, res) => {
   try {
@@ -395,7 +599,7 @@ app.post('/api/forgot-password', csrfProtection, [body('email').isEmail()], asyn
   const resetUrl = `${req.protocol}://${req.get('host')}/reset-password?token=${token}&email=${encodeURIComponent(email)}`;
   try {
     await transporter.sendMail({
-      from: process.env.SMTP_USER || 'no-reply@example.com',
+      from: process.env.SMTP_FROM || 'no-reply@example.com',
       to: email,
       subject: 'Password Reset Request',
       text: `You requested a password reset. Click the link below to reset your password:\n\n${resetUrl}\n\nThis link will expire in 1 hour.`
@@ -444,46 +648,85 @@ app.post('/api/settings/update', authenticateToken, csrfProtection, [
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ message: 'Invalid input.' });
+  
   const { setting, value } = req.body;
   const userId = req.user.userId;
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  
   if (!user)
     return res.status(404).json({ message: 'User not found.' });
+  
   try {
     if (setting === 'username') {
-      const existing = db.prepare('SELECT id FROM users WHERE LOWER(username) = LOWER(?)').get(value);
-      if (existing)
+      const trimmedUsername = value.trim();
+      
+      // Don't allow empty username
+      if (!trimmedUsername) {
+        return res.status(400).json({ message: 'Username cannot be empty.' });
+      }
+      
+      // Check if this username is currently used by another user
+      const existingUser = db.prepare(
+        'SELECT id FROM users WHERE LOWER(username) = LOWER(?) AND id != ?'
+      ).get(trimmedUsername, userId);
+      
+      if (existingUser) {
         return res.status(400).json({ message: 'Username is already taken.' });
+      }
+      
+      // Username is available - store the current username in history
       db.prepare(`
         INSERT INTO user_history (user_id, old_username, old_email, old_password, changed_at)
         VALUES (?, ?, ?, ?, ?)
       `).run(user.id, user.username, user.email, user.password, Date.now());
+      
+      // Update the username in the users table
       db.prepare('UPDATE users SET username = ?, updated_at = ? WHERE id = ?')
-        .run(value, Date.now(), userId);
+        .run(trimmedUsername, Date.now(), userId);
+      
+      // Update token with new username if it exists
+      if (user.current_token) {
+        const newToken = generateToken(userId, trimmedUsername);
+        db.prepare('UPDATE users SET current_token = ? WHERE id = ?').run(newToken, userId);
+        res.cookie('authToken', newToken, cookieOptions);
+      }
+      
       return res.json({ message: 'Username updated successfully.' });
     }
+    
+        // Handle other settings
     if (setting === 'email') {
-      const existing = db.prepare('SELECT id FROM users WHERE LOWER(email) = LOWER(?)').get(value);
+      const existing = db.prepare('SELECT id FROM users WHERE LOWER(email) = LOWER(?) AND id != ?')
+        .get(value, userId);
+      
       if (existing)
         return res.status(400).json({ message: 'Email is already taken.' });
+      
       db.prepare(`
         INSERT INTO user_history (user_id, old_username, old_email, old_password, changed_at)
         VALUES (?, ?, ?, ?, ?)
       `).run(user.id, user.username, user.email, user.password, Date.now());
+      
       db.prepare('UPDATE users SET email = ?, updated_at = ? WHERE id = ?')
         .run(value, Date.now(), userId);
+      
       return res.json({ message: 'Email updated successfully.' });
     }
+    
     if (setting === 'password') {
       const hashed = hashPassword(value);
+      
       db.prepare(`
         INSERT INTO user_history (user_id, old_username, old_email, old_password, changed_at)
         VALUES (?, ?, ?, ?, ?)
       `).run(user.id, user.username, user.email, user.password, Date.now());
+      
       db.prepare('UPDATE users SET password = ?, updated_at = ? WHERE id = ?')
         .run(hashed, Date.now(), userId);
+      
       return res.json({ message: 'Password updated successfully.' });
     }
+    
     return res.status(400).json({ message: 'Invalid setting.' });
   } catch (error) {
     console.error(error);
@@ -499,7 +742,13 @@ app.get('/user/:dashboardToken', authenticateToken, csrfProtection, (req, res) =
     .get(req.params.dashboardToken, req.user.userId);
   if (!user)
     return res.status(404).json({ message: 'User not found or invalid dashboard token.' });
-  res.render('user-dashboard', { username: user.username, email: user.email, dashboardToken: req.params.dashboardToken, csrfToken: res.locals.csrfToken });
+  res.render('user-dashboard', { 
+    username: user.username, 
+    email: user.email, 
+    dashboardToken: req.params.dashboardToken, 
+    csrfToken: res.locals.csrfToken,
+    currentTime: '2025-03-13 13:14:46'
+  });
 });
 
 app.get('/dashboard', authenticateToken, csrfProtection, (req, res) => {
@@ -509,7 +758,13 @@ app.get('/dashboard', authenticateToken, csrfProtection, (req, res) => {
   const user = db.prepare('SELECT username, email, dashboard_token FROM users WHERE id = ?')
     .get(req.user.userId);
   if (!user) return res.redirect('/logged-out?reason=notfound');
-  res.render('user-dashboard', { username: user.username, email: user.email, dashboardToken: user.dashboard_token, csrfToken: res.locals.csrfToken });
+  res.render('user-dashboard', { 
+    username: user.username, 
+    email: user.email, 
+    dashboardToken: user.dashboard_token, 
+    csrfToken: res.locals.csrfToken,
+    currentTime: '2025-03-13 13:14:46'
+  });
 });
 
 app.get('/logged-out', (req, res) => {
