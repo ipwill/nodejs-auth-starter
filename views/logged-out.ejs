@@ -1,31 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="description" content="Logged Out">
   <title>Logged Out</title>
   <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/theme.js"></script>
   <script src="/js/bundle.js" defer></script>
+  <script src="/js/loggedOut.js" defer></script>
 </head>
 
 <body>
+  <div class="icon-bar">
+    <button id="theme-toggle" class="icon-button" aria-label="Toggle theme">
+      <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14">
+        <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
+      </svg>
+    </button>
+  </div>
+
   <div class="container">
     <div class="form-section active">
       <h4 class="text-div">Session Ended</h4>
-      <% if (reason==='expired' ) { %>
-        <p class="sub-heading">Your session has expired or you have been logged out. Please log in again to continue.
+      
+      <% if (reason === 'expired') { %>
+        <p class="sub-heading">
+          <svg class="colorFill" style="vertical-align: text-bottom; margin-right: 4px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14">
+            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm1.5-8.5-3.5.875L5 7.5v-1h4.5v1Z"></path>
+          </svg>
+          Your session has expired. Please log in again to continue.
         </p>
-        <% } else { %>
-          <p class="sub-heading">You are not currently logged in. Please log in to access your account.</p>
-          <% } %>
-            <button onclick="window.location.href='/'">
-              <span class="button-content">Back to Login</span>
-            </button>
+      <% } else if (reason === 'notfound') { %>
+        <p class="sub-heading">
+          <svg class="colorFill" style="vertical-align: text-bottom; margin-right: 4px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14">
+            <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16Zm0-9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm0 1.5a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 8Z"></path>
+          </svg>
+          User account not found or access denied.
+        </p>
+      <% } else { %>
+        <p class="sub-heading">
+          You've been signed out. Please sign in to continue.
+        </p>
+      <% } %>
+      
+      <button id="login-redirect-button">
+        <span class="button-content">
+          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14"><path d="M2 2.75C2 1.784 2.784 1 3.75 1h2.5a.75.75 0 0 1 0 1.5h-2.5a.25.25 0 0 0-.25.25v10.5c0 .138.112.25.25.25h2.5a.75.75 0 0 1 0 1.5h-2.5A1.75 1.75 0 0 1 2 13.25Zm6.56 4.5h5.69a.75.75 0 0 1 0 1.5H8.56l1.97 1.97a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L6.22 8.53a.75.75 0 0 1 0-1.06l3.25-3.25a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734Z"></path></svg>
+          Back to Sign In
+        </span>
+      </button>
     </div>
   </div>
 </body>
-
 </html>
