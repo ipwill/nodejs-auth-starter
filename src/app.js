@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Main application client-side entry point
+ * @version 1.5.4
+ * @lastModified 2025-03-13 12:01:57 UTC
+ * @author cgtwig
+ */
+
 import axios from 'axios';
 import { toggleSpinner, showModal, validatePassword } from '/public/js/script.js';
 
@@ -35,10 +42,16 @@ const formManager = {
     if (form) form.classList.add('active');
   },
   show2FA() {
-    this.show('2fa-form');
+    this.show('fa-form');
     const emailContainer = document.getElementById('email-container');
-    if (emailContainer) emailContainer.classList.remove('hidden');
-    startTimer();
+    if (emailContainer) {
+      emailContainer.classList.remove('hidden');
+    }
+    const timerEl = document.getElementById('timer');
+    const resendButtonEl = document.getElementById('resend-button');
+    if (timerEl && resendButtonEl) {
+      startTimer();
+    }
   }
 };
 
@@ -51,15 +64,20 @@ const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribut
 api.defaults.headers.post['X-CSRF-Token'] = csrfToken;
 api.defaults.headers.put['X-CSRF-Token'] = csrfToken;
 api.defaults.headers.delete['X-CSRF-Token'] = csrfToken;
+api.defaults.headers.get['X-CSRF-Token'] = csrfToken;
 
 let timerInterval;
 function startTimer() {
   const timerDisplay = document.getElementById('timer');
   const resendButton = document.getElementById('resend-button');
+  if (!timerDisplay || !resendButton) return;
+  
   let timeLeft = 90;
   timerDisplay.textContent = timeLeft;
   resendButton.style.display = 'none';
+  
   if (timerInterval) clearInterval(timerInterval);
+  
   timerInterval = setInterval(() => {
     timeLeft--;
     timerDisplay.textContent = timeLeft;
@@ -74,15 +92,59 @@ function startTimer() {
 async function resend2FACode() {
   const username = authStorage.getTempUsername();
   if (!username) return;
+  
+  const errorEl = document.getElementById('2fa-error');
+  if (!errorEl) return;
+  
   try {
     toggleSpinner(true, 'verify-2fa-button');
     await api.post('resend-2fa', { username });
     startTimer();
-    document.getElementById('2fa-error').textContent = 'A new code has been sent to your email.';
+    errorEl.textContent = 'A new code has been sent to your email.';
   } catch (err) {
-    document.getElementById('2fa-error').textContent = err.response?.data?.message || 'Resending code failed.';
+    errorEl.textContent = err.response?.data?.message || 'Resending code failed.';
   } finally {
     toggleSpinner(false, 'verify-2fa-button');
+  }
+}
+
+let usernameCheckTimer = null;
+async function checkUsernameAvailability(username, feedbackElement) {
+  if (!username || username.length < 3) {
+    feedbackElement.textContent = '';
+    feedbackElement.className = 'username-feedback';
+    return false; // Username too short
+  }
+  
+  try {
+    const response = await api.get(
+      `check-username-availability?username=${encodeURIComponent(username)}`
+    );
+    
+    // Check if the response has the expected structure
+    if (response.data && typeof response.data.available === 'boolean') {
+      if (response.data.available) {
+        feedbackElement.textContent = 'Username available';
+        feedbackElement.className = 'username-feedback valid';
+        return true;
+      } else {
+        feedbackElement.textContent = 'Username already taken';
+        feedbackElement.className = 'username-feedback invalid';
+        return false;
+      }
+    } else {
+      console.warn('Unexpected response format:', response.data);
+      // Don't mark as invalid if the response is unexpected
+      feedbackElement.textContent = '';
+      feedbackElement.className = 'username-feedback';
+      return true; // Let the server decide during registration
+    }
+  } catch (err) {
+    console.error('Error checking username:', err);
+    // Don't mark as invalid on network errors
+    feedbackElement.textContent = 'Could not verify availability';
+    feedbackElement.className = 'username-feedback';
+    return true; // Let the server decide during registration
   }
 }
 
@@ -92,11 +154,19 @@ const handlers = {
     const username = document.getElementById('username').value.trim();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
+    const confirmPassword = document.getElementById('confirm-password')?.value.trim();
     const errorElement = document.getElementById('register-error');
+    const feedbackElement = document.getElementById('username-feedback');
+    
     errorElement.textContent = '';
 
     if (!username || !email || !password) {
       errorElement.textContent = 'Please fill in all fields.';
+      return;
+    }
+
+    if (confirmPassword && password !== confirmPassword) {
+      errorElement.textContent = 'Passwords do not match.';
       return;
     }
 
@@ -105,20 +175,51 @@ const handlers = {
       return;
     }
 
+    // Only check if the feedback explicitly says the username is invalid
+    if (feedbackElement && feedbackElement.className === 'username-feedback invalid') {
+      errorElement.textContent = 'Please choose a different username.';
+      return;
+    }
+
     try {
       toggleSpinner(true, 'register-button');
-      const response = await api.post('register', { username, email, password });
+      
+      // Remove the duplicate availability check - rely on the server
+      // to provide the final decision
+      
+      const response = await api.post('register', { 
+        username, 
+        email, 
+        password,
+        confirmPassword: confirmPassword || password
+      });
+      
       if (response.status === 201) {
         if (response.data.twoFactorRequired) {
           authStorage.setTempUsername(username);
           formManager.show2FA();
         } else {
           authStorage.store(response.data.token, username);
-          window.location.href = `/user/${response.data.dashboardToken}`;
+          
+          if (response.data.redirectUrl) {
+            window.location.href = response.data.redirectUrl;
+          } else {
+            try {
+              window.location.href = `/dashboard/${response.data.dashboardToken}`;
+            } catch (e) {
+              window.location.href = `/user/${response.data.dashboardToken}`;
+            }
+          }
         }
       }
     } catch (err) {
-      errorElement.textContent = err.response?.data?.message || 'Registration failed. Please try again.';
+      console.error('Registration error:', err);
+      // Provide more specific error messages based on the response
+      if (err.response && err.response.data && err.response.data.message) {
+        errorElement.textContent = err.response.data.message;
+      } else {
+        errorElement.textContent = 'Registration failed. Please try again.';
+      }
     } finally {
       toggleSpinner(false, 'register-button');
     }
@@ -139,14 +240,25 @@ const handlers = {
     try {
       toggleSpinner(true, 'login-button');
       const response = await api.post('login', { username, password });
+      
       if (response.data.twoFactorRequired) {
         authStorage.setTempUsername(username);
         formManager.show2FA();
       } else {
         authStorage.store(response.data.token, username);
-        window.location.href = `/user/${response.data.dashboardToken}`;
+        
+        if (response.data.redirectUrl) {
+          window.location.href = response.data.redirectUrl;
+        } else {
+          try {
+            window.location.href = `/dashboard/${response.data.dashboardToken}`;
+          } catch (e) {
+            window.location.href = `/user/${response.data.dashboardToken}`;
+          }
+        }
       }
     } catch (err) {
+      console.error('Login error:', err);
       errorElement.textContent = err.response?.data?.message || 'Login failed. Please try again.';
     } finally {
       toggleSpinner(false, 'login-button');
@@ -170,8 +282,18 @@ const handlers = {
       const response = await api.post('verify-2fa', { username, token });
       authStorage.clear();
       authStorage.store(response.data.token, username);
-      window.location.href = `/user/${response.data.dashboardToken}`;
+
+      if (response.data.redirectUrl) {
+        window.location.href = response.data.redirectUrl;
+      } else {
+        try {
+          window.location.href = `/dashboard/${response.data.dashboardToken}`;
+        } catch (e) {
+          window.location.href = `/user/${response.data.dashboardToken}`;
+        }
+      }
     } catch (err) {
+      console.error('2FA verification error:', err);
       errorElement.textContent = err.response?.data?.message || '2FA verification failed.';
     } finally {
       toggleSpinner(false, 'verify-2fa-button');
@@ -189,6 +311,7 @@ const handlers = {
       authStorage.clear();
       window.location.href = '/logged-out';
     } catch (err) {
+      console.error('Logout error:', err);
       showModal('Logout failed. Please try again.');
     } finally {
       toggleSpinner(false, 'logout-button');
@@ -207,10 +330,23 @@ const handlers = {
       const response = await api.get(`user/${encodeURIComponent(username)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      window.location.href = `/user/${response.data.dashboardToken}`;
-    } catch {
+      
+      if (response.data.redirectUrl) {
+        window.location.href = response.data.redirectUrl;
+      } else if (response.data.dashboardToken) {
+        try {
+          window.location.href = `/dashboard/${response.data.dashboardToken}`;
+        } catch (e) {
+          window.location.href = `/user/${response.data.dashboardToken}`;
+        }
+      } else {
+        authStorage.clear();
+        formManager.show('login-form');
+      }
+    } catch (err) {
+      console.error('Authentication check error:', err);
       authStorage.clear();
-      window.location.href = '/';
+      formManager.show('login-form');
     }
   }
 };
@@ -224,43 +360,59 @@ document.addEventListener('DOMContentLoaded', () => {
   const showRegisterLink = getEl('show-register');
   const showLoginLink = getEl('show-login');
   const passwordInput = getEl('password');
+  const usernameInput = getEl('username');
   const resendButton = getEl('resend-button');
   const forgotPasswordLink = getEl('forgot-password-link');
   const backToLoginLink = getEl('back-to-login');
   const sendResetLinkButton = getEl('send-reset-link');
   const themeToggleButton = document.getElementById('theme-toggle');
 
-  function switchTheme() {
-    const html = document.documentElement;
-    const currentTheme = html.getAttribute('data-theme');
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+  if (usernameInput) {
+    const feedbackElement = document.createElement('div');
+    feedbackElement.id = 'username-feedback';
+    feedbackElement.className = 'username-feedback';
+    usernameInput.parentNode.insertBefore(feedbackElement, usernameInput.nextSibling);
+    
+    usernameInput.addEventListener('input', () => {
+      clearTimeout(usernameCheckTimer);
+      const username = usernameInput.value.trim();
+      
+      if (!username || username.length < 3) {
+        feedbackElement.textContent = username ? 'Username too short (min 3 characters)' : '';
+        feedbackElement.className = 'username-feedback';
+        return;
+      }
+      
+      feedbackElement.textContent = 'Checking availability...';
+      feedbackElement.className = 'username-feedback checking';
+      
+      usernameCheckTimer = setTimeout(() => {
+        checkUsernameAvailability(username, feedbackElement);
+      }, 500);
+    });
+  }
 
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+  function setupTheme() {
+    // Remove hardcoded data-theme if it exists
+    if (document.documentElement.hasAttribute('data-theme')) {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    
+    const initialTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', initialTheme);
 
-    if (newTheme === 'dark') {
-      themeToggleButton.querySelector('svg').innerHTML = `
-        <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
-      `;
-    } else {
-      themeToggleButton.querySelector('svg').innerHTML = `
-        <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
-      `;
+    if (themeToggleButton) {
+      themeToggleButton.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        console.log(`Theme changed to ${newTheme} mode at ${new Date().toISOString()}`);
+      });
     }
   }
 
-  const initialTheme = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', initialTheme);
-
-  if (themeToggleButton) {
-    if (initialTheme === 'dark') {
-      themeToggleButton.querySelector('svg').innerHTML = `
-        <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
-      `;
-    }
-
-    themeToggleButton.addEventListener('click', switchTheme);
-  }
+  setupTheme();
 
   if (registerButton) registerButton.addEventListener('click', handlers.registerHandler);
   if (loginButton) loginButton.addEventListener('click', handlers.loginHandler);
@@ -270,7 +422,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (showLoginLink) showLoginLink.addEventListener('click', () => formManager.show('login-form'));
   if (passwordInput) passwordInput.addEventListener('input', () => validatePassword(passwordInput.value));
   if (resendButton) resendButton.addEventListener('click', async () => await resend2FACode());
-  handlers.authenticated();
+
+  if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+    const formSections = document.querySelectorAll('.form-section');
+    if (formSections.length > 0) {
+      handlers.authenticated();
+    }
+  }
 
   if (forgotPasswordLink) {
     forgotPasswordLink.addEventListener('click', e => {
@@ -278,22 +436,26 @@ document.addEventListener('DOMContentLoaded', () => {
       formManager.show('forgot-password-form');
     });
   }
+
   if (backToLoginLink) {
     backToLoginLink.addEventListener('click', e => {
       e.preventDefault();
       formManager.show('login-form');
     });
   }
+
   if (sendResetLinkButton) {
     sendResetLinkButton.addEventListener('click', async e => {
       e.preventDefault();
       const email = getEl('forgot-email').value.trim();
       const errorElement = getEl('forgot-password-error');
       errorElement.textContent = '';
+      
       if (!email) {
         errorElement.textContent = 'Please enter your email.';
         return;
       }
+
       try {
         toggleSpinner(true, 'send-reset-link');
         const response = await api.post('forgot-password', { email });
@@ -305,4 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+  
+  console.log(`Auth System v1.5.4 | © 2025 cgtwig | Last Updated: 2025-03-13 12:01:57`);
+  console.log(`Current user: ${authStorage.get().username || 'cgtwigThis'}`);
 });
