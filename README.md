@@ -49,7 +49,7 @@ A Node.js authentication system (~35KiB) built with Express and Better-SQLite3, 
 ## Database schema:
 
 ```sql
--- Users Table
+-- Users table
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
@@ -58,23 +58,22 @@ CREATE TABLE users (
     two_factor_method TEXT,
     email_code TEXT,
     email_code_expires INTEGER,
-    password_reset_token TEXT,
-    password_reset_expires INTEGER,
     bypass_2fa BOOLEAN DEFAULT 0,
     current_token TEXT,
     dashboard_token TEXT UNIQUE,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login DATETIME,
+    reset_password_token TEXT UNIQUE,
+    reset_password_expires DATETIME
 );
 
--- User History Table
-CREATE TABLE user_history (
+-- Username history table to track username changes
+CREATE TABLE username_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    old_username TEXT,
-    old_email TEXT,
-    old_password TEXT,
-    changed_at INTEGER NOT NULL,
+    username TEXT NOT NULL,
+    changed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 ```
@@ -160,7 +159,7 @@ CREATE TABLE user_history (
 
     b) **macOS/Linux/Unix (terminal):**
     ```bash
-    curl -k -L -o mailhog https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_linux_amd64 && chmod +x mailhog && ./mailhog
+    curl -L -o mailhog https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_linux_amd64 && chmod +x mailhog && ./mailhog
     ```
 
     Note: Access MailHog UI at [http://localhost:8025](http://localhost:8025) after installation
