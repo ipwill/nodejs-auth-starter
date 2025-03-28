@@ -1,10 +1,3 @@
-/**
- * @fileoverview Main application client-side entry point
- * @version 1.5.4
- * @lastModified 2025-03-13 12:01:57 UTC
- * @author cgtwig
- */
-
 import axios from 'axios';
 import { toggleSpinner, showModal, validatePassword } from '/public/js/script.js';
 
