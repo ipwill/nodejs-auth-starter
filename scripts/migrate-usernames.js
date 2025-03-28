@@ -18,9 +18,6 @@ const db = new Database(dbPath);
 
 function migrateUsernameHistory() {
   console.log('Starting username history migration...');
-  console.log(`Current time (UTC): 2025-03-13 03:37:55`);
-  console.log(`Migration executed by: cgtwig\n`);
-  
   try {
     const tableExists = db.prepare(
       "SELECT name FROM sqlite_master WHERE type='table' AND name='user_history'"
