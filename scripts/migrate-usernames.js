@@ -1,9 +1,3 @@
-/**
- * Migration script to populate user_history table with existing usernames
- * Date: 2025-03-13 03:37:55
- * Author: drummacon
- */
-
 import Database from 'better-sqlite3';
 import dotenv from 'dotenv';
 import path from 'path';
