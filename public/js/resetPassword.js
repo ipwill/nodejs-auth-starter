@@ -1,10 +1,3 @@
-/**
- * @fileoverview Password reset functionality and validation
- * @version 1.2
- * @lastModified 2025-03-13 04:18:09 UTC
- * @author cgtwig
- */
-
 import { toggleSpinner, showModal, validatePassword } from './script.js';
 
 class PasswordResetManager {

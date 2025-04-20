@@ -1,11 +1,4 @@
 /**
- * @fileoverview Common utility functions for the application
- * @version 1.2
- * @lastModified 2025-02-19 16:26:26 UTC
- * @author cgtwig
- */
-
-/**
  * Creates and displays a modal with a message and close button
  * @param {string} message - The message to display in the modal
  */

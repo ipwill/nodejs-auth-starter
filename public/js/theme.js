@@ -1,10 +1,3 @@
-/**
- * @fileoverview Theme toggle functionality
- * @version 1.0.1
- * @lastModified 2025-03-13 13:20:48
- * @author cgtwig
- */
-
 (function() {
   try {
     const savedTheme = localStorage.getItem('theme') || 'light';
