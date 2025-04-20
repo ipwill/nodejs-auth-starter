@@ -1,8 +1,8 @@
-# Real-time User Authentication (Vanilla JavaScript)
+## Real-time User Authentication (Vanilla JavaScript)
 
 Node.js authentication starter using Express and Better-SQLite3. Provides a secure foundation including email-based 2FA, JWT sessions, CSRF protection, and Helmet security headers. Features a responsive, webpack-bundled EJS frontend. Supports user management tasks like password resets and account history tracking via SQLite. Includes rate limiting and CORS configuration.
 
-## Features
+### Features
 
 - **SQLite Database:** `better-sqlite3` for user data persistence
 - **JWT Authentication:** Token-based secure authentication
@@ -15,7 +15,7 @@ Node.js authentication starter using Express and Better-SQLite3. Provides a secu
 - **User Dashboard:** Profile and account management
 - **Rate Limiting:** Request throttling protection
 
-## Requirements
+### Requirements
 
 - **Node.js:** 18.x or higher
 - **npm:** 8.x or higher
@@ -26,16 +26,17 @@ Node.js authentication starter using Express and Better-SQLite3. Provides a secu
   - 8025 (MailHog UI)
 - **OS:** Windows 10/11, macOS 10.15+, or Linux (Ubuntu 20.04+, Debian 11+)
 
-## Dependencies
+### Dependencies
 
 | Category | Package | Version | Purpose |
 |----------|---------|---------|----------|
 | **Core** | express | ^4.18.x | Server |
-| | better-sqlite3 | ^8.6.x | SQLite database |
+| | better-sqlite3 | ^11.8.x | SQLite database |
 | | jsonwebtoken | ^9.0.x | JWT authentication |
 | | nodemailer | ^6.9.x | E-mail service |
-| | dotenv | ^16.3.x | .env support |
-| **Security** | helmet | ^7.0.x | HTTP headers |
+| | dotenv | ^16.4.x | .env support |
+| | axios | ^1.6.x | HTTP client (frontend) |
+| **Security** | helmet | ^7.1.x | HTTP headers |
 | | express-rate-limit | ^7.1.x | Rate limiting |
 | | csrf | ^3.1.x | CSRF token protection |
 | | cookie-parser | ^1.4.x | Cookie handling |
@@ -43,60 +44,70 @@ Node.js authentication starter using Express and Better-SQLite3. Provides a secu
 | **Validation** | express-validator | ^7.0.x | Input validation |
 | **Frontend** | ejs | ^3.1.x | Template engine |
 | | cors | ^2.8.x | CORS middleware |
-| **Development** | nodemon | ^3.0.x | Hot reloading |
-| | mailhog | N/A | 2FA testing |
+| **Development** | mailhog | N/A | 2FA testing |
+| | webpack | ^5.90.x | Asset bundling |
+| | @babel/core | ^7.23.x | JS transpiling |
 
-## Database schema:
+### Database schema
 
 ```sql
 -- Users table
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    two_factor_method TEXT,
-    email_code TEXT,
-    email_code_expires INTEGER,
-    bypass_2fa BOOLEAN DEFAULT 0,
-    current_token TEXT,
-    dashboard_token TEXT UNIQUE,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    last_login DATETIME,
-    reset_password_token TEXT UNIQUE,
-    reset_password_expires DATETIME
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  two_factor_method TEXT,
+  email_code TEXT,
+  email_code_expires INTEGER,
+  password_reset_token TEXT,
+  password_reset_expires INTEGER,
+  bypass_2fa BOOLEAN DEFAULT 0,
+  current_token TEXT,
+  dashboard_token TEXT UNIQUE,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL
 );
 
--- Username history table to track username changes
-CREATE TABLE username_history (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    username TEXT NOT NULL,
-    changed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+-- User history table to track changes
+CREATE TABLE IF NOT EXISTS user_history (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  old_username TEXT,
+  old_email TEXT,
+  old_password TEXT,
+  changed_at INTEGER NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id)
 );
 ```
 
-## API routes:
+### API routes
 
-### Authentication
+**Authentication**
+- `GET /api/check-auth` - Check if user is authenticated
 - `POST /api/register` - Register new user
 - `POST /api/login` - User login
 - `POST /api/verify-2fa` - Verify 2FA code
+- `POST /api/resend-2fa` - Resend 2FA code
 - `POST /api/logout` - User logout
 
-### Password management
+**Password management**
 - `POST /api/forgot-password` - Request password reset
 - `GET /reset-password` - Display password reset form
 - `POST /api/reset-password` - Process password reset
 
-### User settings
-- `POST /api/settings/update` - Update user settings
-- `GET /user/:dashboardToken` - Access user dashboard
-- `GET /dashboard` - Main dashboard
+**User settings & Data**
+- `POST /api/settings/update` - Update user settings (username, email, password)
+- `GET /api/check-username-availability` - Check if username is available
+- `GET /api/admin/username-history/:userId` - Get username change history for a user
 
-## Setup:
+**Frontend Routes (Server-Rendered)**
+- `GET /user/:dashboardToken` - Access user dashboard
+- `GET /dashboard` - Redirects to user-specific dashboard
+- `GET /` - Login/Register page
+- `GET /logged-out` - Logout confirmation page
+
+### Setup
 
 1.  **Clone:**
     ```bash
@@ -185,21 +196,16 @@ CREATE TABLE username_history (
 
     Access the application at [http://localhost:3000](http://localhost:3000)
 
-## Screenshots:
+### Screenshots
 
 | Login (light) | Register (light) |
 |-------|----------|
-| ![light-login.png](images/light-login.png) | ![light-register.png](images/light-register.png) | 
+| ![light-login.png](public/images/light-login.png) | ![light-register.png](public/images/light-register.png) | 
   
 | Login (dark) | Register (dark) |
 |----------|------------------|
-| ![dark-login.png](images/dark-login.png) | ![dark-register.png](images/dark-register.png) |
+| ![dark-login.png](public/images/dark-login.png) | ![dark-register.png](public/images/dark-register.png) |
 
-## Troubleshooting:
-
-*   **.env configuration:** Ensure `SMTP_HOST=127.0.0.1` is present and uncommented in your `.env` file.
-*   **Build output:** If experiencing issues, run `npm run build`, clear your browser cache, and restart the server.
-
-## License:
+### License
 
 MIT
