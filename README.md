@@ -173,7 +173,7 @@ CREATE TABLE IF NOT EXISTS user_history (
     Invoke-WebRequest -Uri "https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_windows_amd64.exe" -OutFile "mailhog.exe" ; Start-Process -FilePath ".\mailhog.exe"
     ```
     
-    c) **(Optional)** Docker
+    c) **(Optional) Docker**
     ```
     docker run --rm -d -p 1025:1025 -p 8025:8025 --name mailhog mailhog/mailhog
     ```
