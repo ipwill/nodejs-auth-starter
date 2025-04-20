@@ -159,21 +159,21 @@ CREATE TABLE IF NOT EXISTS user_history (
     openssl rand -hex 16   # ENCRYPTION_IV
     ```
 
-4.  **2FA: MailHog (required)**
+4.  **2FA: MailHog (recommended)**
 
-    One-liner commands that download and run MailHog
-    
-    a) **Windows (Powershell):**
-    ```powershell
-    Invoke-WebRequest -Uri "https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_windows_amd64.exe" -OutFile "mailhog.exe" ; Start-Process -FilePath ".\mailhog.exe"
-    ```
+    One-liner commands to download and run MailHog
 
-    b) **macOS/Linux/Unix (terminal):**
+     a) **macOS/Linux/Unix (terminal):**
     ```bash
     sh -c 'os=$(uname -s); arch=$(uname -m); V="v1.0.1"; case "$os-$arch" in Linux-x86_64|Linux-amd64) suffix="linux_amd64";; Linux-aarch64|Linux-arm64) suffix="linux_arm64";; Darwin-x86_64|Darwin-amd64) suffix="darwin_amd64";; Darwin-arm64) suffix="darwin_amd64"; echo "NOTE: Using amd64 binary via Rosetta 2 on arm64 Mac.";; *) echo "Error: Unsupported OS/Arch: $os-$arch"; exit 1;; esac; echo "Downloading MailHog_$suffix..."; curl -fL "https://github.com/mailhog/MailHog/releases/download/$V/MailHog_$suffix" -o mailhog && chmod +x mailhog && echo "Starting MailHog..." && ./mailhog || echo "MailHog download or execution failed."'
     ```
-
-    c) Optional: Docker
+    
+    b) **Windows (Powershell):**
+    ```powershell
+    Invoke-WebRequest -Uri "https://github.com/mailhog/MailHog/releases/download/v1.0.1/MailHog_windows_amd64.exe" -OutFile "mailhog.exe" ; Start-Process -FilePath ".\mailhog.exe"
+    ```
+    
+    c) **(Optional)** Docker
     ```
     docker run --rm -d -p 1025:1025 -p 8025:8025 --name mailhog mailhog/mailhog
     ```
