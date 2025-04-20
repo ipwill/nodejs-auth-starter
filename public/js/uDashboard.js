@@ -1,11 +1,3 @@
-/**
- * @fileoverview User dashboard functionality and settings management
- * @version 1.5.7
- * @lastModified 2025-03-13 12:44:24 UTC
- * @author cgtwig
- */
-
-// Set initial theme before DOM loads to prevent flash of incorrect theme
 (function() {
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
@@ -21,8 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
       this.typingTimer = null;
       this.doneTypingInterval = 500;
       this.updateDateTime();
-      
-      // Set up timer to update date/time periodically
       setInterval(() => this.updateDateTime(), 30000);
     }
 
@@ -32,16 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Theme toggle button not found');
         return;
       }
-
       themeToggleBtn.addEventListener('click', () => {
-        // Get current theme and determine new theme
         const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
         const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        
-        // Update HTML attribute and localStorage
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme);
-        
         console.log(`Theme changed to ${newTheme} mode at ${this.formatUTCDate(new Date())}`);
       });
     }
@@ -67,8 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async checkAuth() {
       try {
-        const response = await fetch('/api/check-auth', { 
-          method: 'GET', 
+        const response = await fetch('/api/check-auth', {
+          method: 'GET',
           credentials: 'same-origin',
           headers: { 'X-CSRF-Token': this.csrfToken }
         });
@@ -100,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch('/api/logout', {
           method: 'POST',
           credentials: 'same-origin',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'X-CSRF-Token': this.csrfToken
           }
@@ -124,7 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
       inputs.forEach(input => {
         input.dataset.originalValue = input.value;
         input.classList.remove('hidden');
-        input.focus();
+        if(inputs.length === 1 || input !== inputs[1]) {
+            input.focus();
+        }
       });
 
       button.classList.remove('edit-button');
@@ -171,8 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
           method: 'GET',
           credentials: 'same-origin',
           headers: {
-            'Accept': 'application/json',
-            'X-CSRF-Token': this.csrfToken
+            'Accept': 'application/json'
           }
         });
         const result = await response.json();
@@ -182,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
             feedbackElement.className = 'username-feedback valid';
             input.dataset.isValid = 'true';
           } else {
-            feedbackElement.textContent = 'Username already taken';
+            feedbackElement.textContent = result.message || 'Username already taken';
             feedbackElement.className = 'username-feedback invalid';
             input.dataset.isValid = 'false';
           }
@@ -202,27 +188,41 @@ document.addEventListener('DOMContentLoaded', () => {
     handleSaveClick(setting, row, button) {
       const inputs = row.querySelectorAll('.edit-input');
       const values = Array.from(inputs).map(i => i.value.trim());
+      const usernameInput = inputs[0];
+
       if (setting === 'username') {
         const feedbackElement = row.querySelector('.username-feedback');
-        if (feedbackElement && feedbackElement.className.includes('invalid')) {
-          this.showMessage('Invalid username. Please choose another.', 'error');
-          return;
+        if (usernameInput.dataset.isValid === 'false') {
+            this.showMessage(feedbackElement?.textContent || 'Username is not valid or available.', 'error');
+            return;
+        }
+        if (!values[0] || !/^[a-zA-Z0-9_]{3,20}$/.test(values[0])) {
+             this.showMessage('Invalid username format.', 'error');
+             return;
         }
       }
-      if (setting === 'password' && values[0] !== values[1]) {
-        this.showMessage('Passwords do not match', 'error');
-        return;
+      if (setting === 'password') {
+          if (values[0].length < 8 || !/[A-Z]/.test(values[0]) || !/[a-z]/.test(values[0]) || !/[0-9]/.test(values[0]) || !/[@$!%*?&]/.test(values[0])) {
+              this.showMessage('Password does not meet complexity requirements.', 'error');
+              return;
+          }
+          if (values[0] !== values[1]) {
+              this.showMessage('Passwords do not match.', 'error');
+              return;
+          }
       }
+      if (setting === 'email') {
+          if (!values[0] || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values[0])) {
+              this.showMessage('Invalid email format.', 'error');
+              return;
+          }
+      }
+
       this.updateSetting(setting, values, row, button);
     }
 
     async updateSetting(setting, values, row, saveButton) {
-      let payload = { setting, value: '' };
-      if (setting === 'password') {
-        payload.value = values[0];
-      } else {
-        payload.value = values[0];
-      }
+      let payload = { setting, value: values[0] };
 
       try {
         const response = await fetch('/api/settings/update', {
@@ -237,14 +237,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!response.ok) {
           const result = await response.json();
-          throw new Error(result.message || 'Update failed');
+          throw new Error(result.message || `Update failed with status ${response.status}`);
         }
 
-        this.showMessage(`${setting} updated successfully`, 'success');
+        const result = await response.json();
+        this.showMessage(result.message || `${setting} updated successfully`, 'success');
+
         if (setting !== 'password') {
           row.querySelector('.display-value').textContent = payload.value || 'Not set';
+        } else {
+          row.querySelector('.display-value').textContent = '••••••••';
         }
-        row.querySelectorAll('.edit-input').forEach(input => input.classList.add('hidden'));
+        row.querySelectorAll('.edit-input').forEach(input => {
+            input.classList.add('hidden');
+            if (setting === 'password') input.value = '';
+        });
         row.querySelector('.display-value').classList.remove('hidden');
 
         saveButton.classList.remove('save-button');
@@ -265,14 +272,25 @@ document.addEventListener('DOMContentLoaded', () => {
           if (userInfoElement) {
             userInfoElement.innerHTML = `Logged in as <strong>${payload.value}</strong>`;
           }
+          // Should username change require new JWT, server handles cookie, maybe reload?
+          // window.location.reload(); // Consider if necessary
         }
+        if (setting === 'password') {
+             this.showMessage('Password updated. Please log in again.', 'success');
+             setTimeout(() => window.location.href = '/?reason=passwordChanged', 1500);
+        }
+
         const lastUpdatedEl = document.getElementById('last-updated');
         if (lastUpdatedEl) {
           lastUpdatedEl.textContent = this.formatUTCDate(new Date());
         }
       } catch (error) {
         console.error('Error updating setting:', error);
-        this.showMessage(error.message, 'error');
+        this.showMessage(error.message || 'Could not update setting.', 'error');
+        // Optionally revert UI changes on failure?
+        // row.querySelectorAll('.edit-input').forEach(input => {
+        //     input.value = input.dataset.originalValue;
+        // });
       }
     }
 
@@ -284,11 +302,10 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => msgDiv.remove(), 3000);
     }
   }
-  
+
   new DashboardManager();
-  console.log(`Auth System v1.5.7 | © 2025 cgtwig | Last Updated: 2025-03-13 12:44:24`);
-  
-  // Use the username from the DOM as it's already rendered server-side
+  console.log(`Auth System v1.5.7 | © 2025 httpcg | Last Updated: 2025-04-20 00:34:01`);
+
   const userInfoElement = document.getElementById('user-info');
   const usernameElement = userInfoElement?.querySelector('strong');
   const username = usernameElement?.textContent || 'Not logged in';
