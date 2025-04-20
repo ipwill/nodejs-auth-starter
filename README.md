@@ -1,6 +1,8 @@
-## Real-time User Authentication (Vanilla JavaScript)
+## Real-time User Authentication
 
-Node.js authentication starter using Express and Better-SQLite3. Provides a secure foundation including email-based 2FA, JWT sessions, CSRF protection, and Helmet security headers. Features a responsive, webpack-bundled EJS frontend. Supports user management tasks like password resets and account history tracking via SQLite. Includes rate limiting and CORS configuration.
+This project is intended to provide developers with a starting foundation when building secure user interfaces for nodeJS web apps. Security features include JWT, 2FA, CSRF protection, password hashing, and hardened headers. Supports user management tasks like password resets and account history tracking via SQLite. Includes rate limiting and CORS configuration.
+
+This project is mainted solely by [httpcg](https://github.com/httpcg)
 
 ### Features
 
