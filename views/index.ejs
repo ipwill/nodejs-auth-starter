@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <meta name="csrf-token" content="<%= csrfToken %>">
-  <meta name="description" content="User Dashboard">
-  <title>Dashboard | User</title>
+  <meta name="description" content="Login and Registration page for nodejs-auth-starter">
+  <title><%= typeof title !== 'undefined' ? title : 'Login or Register' %></title>
   <link rel="icon" href="/favicon.ico">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="manifest" href="/manifest.json">
@@ -17,182 +17,189 @@
 
 <body>
   <div class="icon-bar">
-    <button class="theme-toggle icon-button" id="theme-toggle" title="Toggle theme">
-      <!-- Sun icon - shows in dark mode -->
-      <svg class="colorFill sun-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14">
+    <button class="theme-toggle icon-button" id="theme-toggle" title="Toggle color theme" aria-label="Toggle color theme">
+      <svg class="colorFill sun-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14">
         <path d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 0 1-1.275-.326.749.749 0 0 1 .215-.734l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8Zm-8 5a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm3.536-1.464a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018l-1.06-1.06a.75.75 0 0 1 0-1.06Z"></path>
       </svg>
-      <!-- Moon icon - shows in light mode -->
-      <svg class="colorFill moon-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14">
+      <svg class="colorFill moon-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14">
         <path d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"></path>
       </svg>
-      <span class="theme-text-light">light</span>
-      <span class="theme-text-dark">dark</span>
+      <span class="theme-text-light visually-hidden">Switch to dark theme</span>
+      <span class="theme-text-dark visually-hidden">Switch to light theme</span>
     </button>
-    <a href="https://github.com/cgtwig/nodejs-auth-starter" class="github-link" target="_blank" rel="noopener noreferrer">
+    <a href="https://github.com/httpcg/nodejs-auth-starter" class="github-link" target="_blank" rel="noopener noreferrer" aria-label="View source code on GitHub">
       <div class="github-button">
-        <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14">
+        <svg class="colorFill" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="14" height="14">
           <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
         </svg>
-        nodejs-auth-starter
+        View Source
       </div>
     </a>
   </div>
-  <div class="container">
-    <div id="register-form" class="form-section">
+
+  <main class="container">
+
+    <form id="register-form" class="form-section" action="/api/register" method="POST" novalidate>
       <h4 class="text-div">Register</h4>
-      <p class="sub-heading">Please provide the necessary information below to create your account.</p>
+      <p class="sub-heading">Create your account by providing the information below.</p>
+
       <div class="form-group">
         <label for="username">
-          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-            <path
-              d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z">
-            </path>
+          <svg class="colorFill" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+            <path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path>
           </svg>
-          <span class="sub-label">
-            Username
-          </span>
+          <span class="sub-label">Username</span>
         </label>
+        <input type="text" id="username" name="username" placeholder="Choose a username" autocomplete="username" required minlength="3" maxlength="20" pattern="^[a-zA-Z0-9_]+$" aria-describedby="username-availability-message username-constraints">
+        <p id="username-constraints" class="input-hint visually-hidden">Must be 3-20 characters using only letters, numbers, and underscores.</p>
+        <p id="username-availability-message" class="availability-message" aria-live="polite"></p>
       </div>
-      <input type="text" id="username" placeholder="Enter your username" autocomplete="username">
+
       <div class="form-group">
         <label for="email">
-          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-            <path
-              d="M1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 14H1.75A1.75 1.75 0 0 1 0 12.25v-8.5C0 2.784.784 2 1.75 2ZM1.5 12.251c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V5.809L8.38 9.397a.75.75 0 0 1-.76 0L1.5 5.809v6.442Zm13-8.181v-.32a.25.25 0 0 0-.25-.25H1.75a.25.25 0 0 0-.25.25v.32L8 7.88Z">
-            </path>
+          <svg class="colorFill" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+            <path d="M1.75 2h12.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 14H1.75A1.75 1.75 0 0 1 0 12.25v-8.5C0 2.784.784 2 1.75 2ZM1.5 12.251c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25V5.809L8.38 9.397a.75.75 0 0 1-.76 0L1.5 5.809v6.442Zm13-8.181v-.32a.25.25 0 0 0-.25-.25H1.75a.25.25 0 0 0-.25.25v.32L8 7.88Z"></path>
           </svg>
-          <span class="sub-label">
-            Email
-          </span>
+          <span class="sub-label">Email</span>
         </label>
+        <input type="email" id="email" name="email" placeholder="Enter your email address" autocomplete="email" required maxlength="254">
       </div>
-      <input type="email" id="email" placeholder="Enter your email" autocomplete="email">
+
       <div class="form-group">
         <label for="password">
-          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-            <path
-              d="M4 4a4 4 0 0 1 8 0v2h.25c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25v-5.5C2 6.784 2.784 6 3.75 6H4Zm8.25 3.5h-8.5a.25.25 0 0 0-.25.25v5.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25ZM10.5 6V4a2.5 2.5 0 1 0-5 0v2Z">
-            </path>
+          <svg class="colorFill" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+            <path d="M4 4a4 4 0 0 1 8 0v2h.25c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25v-5.5C2 6.784 2.784 6 3.75 6H4Zm8.25 3.5h-8.5a.25.25 0 0 0-.25.25v5.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25ZM10.5 6V4a2.5 2.5 0 1 0-5 0v2Z"></path>
           </svg>
-          <span class="sub-label">
-            Password
-          </span>
+          <span class="sub-label">Password</span>
         </label>
+        <input type="password" id="password" name="password" placeholder="Create a strong password" autocomplete="new-password" required aria-describedby="password-requirements">
       </div>
-      <input type="password" id="password" placeholder="Enter your password" autocomplete="new-password">
-      <div id="password-requirements">
+
+      <div class="form-group">
+         <label for="confirmPassword">Confirm Password</label>
+         <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" autocomplete="new-password" required>
+      </div>
+
+      <div id="password-requirements" aria-live="polite">
+        <p class="input-hint">Password must contain:</p>
         <ul>
-          <li id="length" class="invalid"> - At least 8 characters</li>
-          <li id="uppercase" class="invalid"> - At least one uppercase letter</li>
-          <li id="lowercase" class="invalid"> - At least one lowercase letter</li>
-          <li id="number" class="invalid"> - At least one number</li>
-          <li id="special" class="invalid"> - At least one special character (@$!%*?&)</li>
+          <li id="length" class="invalid">At least 8 characters</li>
+          <li id="uppercase" class="invalid">At least one uppercase letter</li>
+          <li id="lowercase" class="invalid">At least one lowercase letter</li>
+          <li id="number" class="invalid">At least one number</li>
+          <li id="special" class="invalid">At least one special character</li>
         </ul>
       </div>
-      <button id="register-button">
+
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <button type="submit" id="register-button">
         <span class="button-content">Register</span>
-        <span class="button-spinner hidden">
-          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-            <path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path>
-          </svg>
+        <span class="button-spinner hidden" aria-hidden="true">
+          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg>
         </span>
       </button>
-      <p class="error" id="register-error"></p>
+      <p class="error" id="register-error" role="alert" aria-live="assertive"></p>
       <p class="font-second">
-        Already have an account? <a href="#" id="show-login" class="link">Login</a>
+        Already have an account? <button type="button" data-form-target="login-form" class="link">Login here</button>
       </p>
-    </div>
-    <div id="login-form" class="form-section active">
+    </form>
+
+    <form id="login-form" class="form-section active" action="/api/login" method="POST" novalidate>
       <h4 class="text-div">Login</h4>
-      <p class="sub-heading">Enter your credentials below to access your account.</p>
+      <p class="sub-heading">Welcome back! Enter your credentials below.</p>
+
       <div class="form-group">
         <label for="login-username">
-          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-            <path
-              d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z">
-            </path>
+          <svg class="colorFill" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+            <path d="M10.561 8.073a6.005 6.005 0 0 1 3.432 5.142.75.75 0 1 1-1.498.07 4.5 4.5 0 0 0-8.99 0 .75.75 0 0 1-1.498-.07 6.004 6.004 0 0 1 3.431-5.142 3.999 3.999 0 1 1 5.123 0ZM10.5 5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"></path>
           </svg>
-          <span class="sub-label">
-            Username
-          </span>
+          <span class="sub-label">Username</span>
         </label>
+        <input type="text" id="login-username" name="username" placeholder="Enter your username" autocomplete="username" required>
       </div>
-      <input type="text" id="login-username" placeholder="Enter your username" autocomplete="username">
-      <div class="form-group space-btm">
-        <label for="login-password">
-          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-            <path
-              d="M4 4a4 4 0 0 1 8 0v2h.25c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25v-5.5C2 6.784 2.784 6 3.75 6H4Zm8.25 3.5h-8.5a.25.25 0 0 0-.25.25v5.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25ZM10.5 6V4a2.5 2.5 0 1 0-5 0v2Z">
-            </path>
-          </svg>
-          <span class="sub-label">
-            Password
-          </span>
-        </label>
-      </div>
-      <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
-      <button id="login-button">
-        <span class="button-content">Login</span>
-        <span class="button-spinner hidden">
-          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-            <path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path>
-          </svg>
-        </span>
-      </button>
-      <p class="error" id="login-error"></p>
-      <p class="font-second">
-        Don't have an account? <a href="#" id="show-register" class="link">Register</a>
-      </p>
-      <p class="font-second-link">
-        <a href="#" id="forgot-password-link" class="link">Forgot password?</a>
-      </p>
-    </div>
-    <div id="forgot-password-form" class="form-section">
-      <h4 class="text-div">Forgot Password</h4>
+
       <div class="form-group">
-        <label for="forgot-email">Enter your email</label>
-      </div>
-      <input type="email" id="forgot-email" placeholder="Enter your email" autocomplete="email">
-      <button id="send-reset-link">
-        <span class="button-content">Send Reset Link</span>
-        <span class="button-spinner hidden">
-          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-            <path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path>
+        <label for="login-password">
+          <svg class="colorFill" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+            <path d="M4 4a4 4 0 0 1 8 0v2h.25c.966 0 1.75.784 1.75 1.75v5.5A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25v-5.5C2 6.784 2.784 6 3.75 6H4Zm8.25 3.5h-8.5a.25.25 0 0 0-.25.25v5.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25v-5.5a.25.25 0 0 0-.25-.25ZM10.5 6V4a2.5 2.5 0 1 0-5 0v2Z"></path>
           </svg>
+          <span class="sub-label">Password</span>
+        </label>
+        <input type="password" id="login-password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+      </div>
+
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <button type="submit" id="login-button">
+        <span class="button-content">Login</span>
+        <span class="button-spinner hidden" aria-hidden="true">
+          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg>
         </span>
       </button>
-      <p class="error" id="forgot-password-error"></p>
+      <p class="error" id="login-error" role="alert" aria-live="assertive"></p>
+      <div class="links-section">
+        <p class="font-second">
+          Don't have an account? <button type="button" data-form-target="register-form" class="link">Register here</button>
+        </p>
+        <p class="font-second-link">
+          <button type="button" data-form-target="forgot-password-form" class="link">Forgot password?</button>
+        </p>
+      </div>
+    </form>
+
+    <form id="forgot-password-form" class="form-section" action="/api/forgot-password" method="POST" novalidate>
+      <h4 class="text-div">Forgot Password</h4>
+      <p class="sub-heading">Enter your email address to receive a password reset link.</p>
+
+      <div class="form-group">
+        <label for="forgot-email">Email Address</label>
+        <input type="email" id="forgot-email" name="email" placeholder="Enter your account email" autocomplete="email" required maxlength="254">
+      </div>
+
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <button type="submit" id="send-reset-link">
+        <span class="button-content">Send Reset Link</span>
+        <span class="button-spinner hidden" aria-hidden="true">
+          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg>
+        </span>
+      </button>
+      <p class="message" id="forgot-password-message" role="status" aria-live="polite"></p>
       <p class="font-second">
-        Remember your password? <a href="#" id="back-to-login" class="link">Back to Login</a>
+        Remember your password? <button type="button" data-form-target="login-form" class="link">Back to Login</button>
       </p>
-    </div>
-    <div id="fa-form" class="form-section">
+    </form>
+
+    <form id="fa-form" class="form-section" action="/api/verify-2fa" method="POST" novalidate>
       <h4 class="text-div">Email Verification</h4>
-      <p class="sub-heading">Please enter the verification code sent to your email.</p>
+      <p class="sub-heading">Please enter the 6-digit verification code sent to your email.</p>
+
       <div class="form-group">
         <label for="email-token">
-          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-            <path
-              d="M10.5 0a5.499 5.499 0 1 1-1.288 10.848l-.932.932a.749.749 0 0 1-.53.22H7v.75a.749.749 0 0 1-.22.53l-.5.5a.749.749 0 0 1-.53.22H5v.75a.749.749 0 0 1-.22.53l-.5.5a.749.749 0 0 1-.53.22h-2A1.75 1.75 0 0 1 0 14.25v-2c0-.199.079-.389.22-.53l4.932-4.932A5.5 5.5 0 0 1 10.5 0Zm-4 5.5c-.001.431.069.86.205 1.269a.75.75 0 0 1-.181.768L1.5 12.56v1.69c0 .138.112.25.25.25h1.69l.06-.06v-1.19a.75.75 0 0 1 .75-.75h1.19l.06-.06v-1.19a.75.75 0 0 1 .75-.75h1.19l1.023-1.025a.75.75 0 0 1 .768-.18A4 4 0 1 0 6.5 5.5ZM11 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z">
-            </path>
+          <svg class="colorFill" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
+            <path d="M10.5 0a5.499 5.499 0 1 1-1.288 10.848l-.932.932a.749.749 0 0 1-.53.22H7v.75a.749.749 0 0 1-.22.53l-.5.5a.749.749 0 0 1-.53.22H5v.75a.749.749 0 0 1-.22.53l-.5.5a.749.749 0 0 1-.53.22h-2A1.75 1.75 0 0 1 0 14.25v-2c0-.199.079-.389.22-.53l4.932-4.932A5.5 5.5 0 0 1 10.5 0Zm-4 5.5c-.001.431.069.86.205 1.269a.75.75 0 0 1-.181.768L1.5 12.56v1.69c0 .138.112.25.25.25h1.69l.06-.06v-1.19a.75.75 0 0 1 .75-.75h1.19l.06-.06v-1.19a.75.75 0 0 1 .75-.75h1.19l1.023-1.025a.75.75 0 0 1 .768-.18A4 4 0 1 0 6.5 5.5ZM11 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path>
           </svg>
           <span class="sub-label">Verification Code</span>
         </label>
+        <input type="text" id="email-token" name="token" placeholder="Enter 6-digit code" maxlength="6" minlength="6" inputmode="numeric" autocomplete="one-time-code" required pattern="^[0-9]{6}$">
+        <input type="hidden" id="fa-username" name="username" value="">
       </div>
-      <input type="text" id="email-token" placeholder="Enter 6-digit code" maxlength="6" inputmode="numeric"
-        autocomplete="one-time-code">
-      <button id="verify-2fa-button">
-        <span class="button-content">Verify</span>
-        <span class="button-spinner hidden">
-          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12">
-            <path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path>
-          </svg>
+
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+      <button type="submit" id="verify-2fa-button">
+        <span class="button-content">Verify Code</span>
+        <span class="button-spinner hidden" aria-hidden="true">
+          <svg class="colorFill" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="12" height="12"><path d="M2 7.75A.75.75 0 0 1 2.75 7h10a.75.75 0 0 1 0 1.5h-10A.75.75 0 0 1 2 7.75Z"></path></svg>
         </span>
       </button>
-      <p class="error" id="2fa-error"></p>
-    </div>
-  </div>
-</body>
+      <p class="error" id="2fa-error" role="alert" aria-live="assertive"></p>
+      <p class="font-second">
+        Didn't receive the code? <span id="timer"></span> <button type="button" id="resend-2fa-button" class="link disabled" disabled>Resend code</button>
+      </p>
+    </form>
 
+  </main>
+</body>
 </html>
