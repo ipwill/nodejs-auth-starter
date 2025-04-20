@@ -1,6 +1,6 @@
 # Real-time User Authentication (Vanilla JavaScript)
 
-A Node.js authentication system (~35KiB) built with Express and Better-SQLite3, featuring mandatory email-based 2FA, JWT authentication, and CSRF protection via Helmet. Includes a webpack-bundled frontend with EJS templates, real-time state management, and responsive UI components. The SQLite database handles user sessions, password reset tokens, and account history tracking. Supports secure HTTP headers, rate limiting, and CORS configuration for production deployment.
+Node.js authentication starter using Express and Better-SQLite3. Provides a secure foundation including email-based 2FA, JWT sessions, CSRF protection, and Helmet security headers. Features a responsive, webpack-bundled EJS frontend. Supports user management tasks like password resets and account history tracking via SQLite. Includes rate limiting and CORS configuration.
 
 ## Features
 
