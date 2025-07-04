@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS user_history (
     openssl rand -hex 16   # ENCRYPTION_IV
     ```
 
-4.  **2FA: MailHog (recommended)**
+4.  **2FA: MailHog**
 
     One-liner commands to download and run MailHog
 
