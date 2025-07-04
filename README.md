@@ -1,4 +1,14 @@
-## Real-time User Authentication
+### Screenshots
+
+| Login (light) | Register (light) |
+|-------|----------|
+| ![light-login.png](public/images/light-login.png) | ![light-register.png](public/images/light-register.png) | 
+  
+| Login (dark) | Register (dark) |
+|----------|------------------|
+| ![dark-login.png](public/images/dark-login.png) | ![dark-register.png](public/images/dark-register.png) |
+
+### Real-time User Authentication
 
 This project is intended to provide developers with a starting foundation when building secure user interfaces for nodeJS web apps. Security features include JWT, 2FA, CSRF protection, password hashing, and hardened headers. Supports user management tasks like password resets and account history tracking via SQLite. Includes rate limiting and CORS configuration.
 
@@ -195,16 +205,6 @@ CREATE TABLE IF NOT EXISTS user_history (
     ```
 
     Access the application at [http://localhost:3000](http://localhost:3000)
-
-### Screenshots
-
-| Login (light) | Register (light) |
-|-------|----------|
-| ![light-login.png](public/images/light-login.png) | ![light-register.png](public/images/light-register.png) | 
-  
-| Login (dark) | Register (dark) |
-|----------|------------------|
-| ![dark-login.png](public/images/dark-login.png) | ![dark-register.png](public/images/dark-register.png) |
 
 ### License
 
