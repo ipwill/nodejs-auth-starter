@@ -1,3 +1,4 @@
+### nodejs-auth-starter
 This project is intended to provide developers with a starting foundation when building secure user interfaces for nodeJS web apps. Security features include JWT, 2FA, CSRF protection, password hashing, and hardened headers. Supports user management tasks like password resets and account history tracking via SQLite. Includes rate limiting and CORS configuration. This is framework-free and still in development. This should only be used for protyping and testing, not for production.
 
 ### Real-time User Authentication
