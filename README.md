@@ -1,8 +1,8 @@
 ### About
-`nodejs-auth-starter` is a boilerplate user authentication web app for NodeJS
+`nodejs-auth-starter` is a boilerplate user authentication web app for NodeJS.
 
 ## Security
-Includes basic support for JWT, CSRF, password hashing, 
+Includes basic support for JWT, CSRF, password hashing.
 
 ### Features
 
