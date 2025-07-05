@@ -1,17 +1,5 @@
-### nodejs-auth-starter
-A boilerplate user authentication web app for NodeJS. Built in support for...
-- Mandatory 2FA
-- JWT token
-- Password reset
-- Username edits
-- Rate limiting
-- CORS
-
-### Screenshots
-![light-login.png](public/images/light-login.png)
-![light-register.png](public/images/light-register.png)
-![dark-login.png](public/images/dark-login.png)
-![dark-register.png](public/images/dark-register.png)res basic signup/login, password reset, duplicate protection for new users, and can setup in under 5 minutes.
+### About
+`nodejs-auth-starter` is a boilerplate user authentication web app for NodeJS
 
 ## Security
 Includes basic support for JWT, CSRF, password hashing, 
@@ -28,6 +16,12 @@ Includes basic support for JWT, CSRF, password hashing,
 - **State Management:** Real-time updates without frameworks
 - **User Dashboard:** Profile and account management
 - **Rate Limiting:** Request throttling protection
+
+### Screenshots
+![light-login.png](public/images/light-login.png)
+![light-register.png](public/images/light-register.png)
+![dark-login.png](public/images/dark-login.png)
+![dark-register.png](public/images/dark-register.png)res basic signup/login, password reset, duplicate protection for new users, and can setup in under 5 minutes.
 
 ### Requirements
 
