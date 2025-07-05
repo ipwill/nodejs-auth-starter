@@ -7,8 +7,6 @@ A boilerplate user authentication web app for NodeJS. Built in support for...
 - Rate limiting
 - CORS
 
-This project is still being actively developed.
-
 ### Screenshots
 ![light-login.png](public/images/light-login.png)
 ![light-register.png](public/images/light-register.png)
