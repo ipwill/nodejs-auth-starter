@@ -1,27 +1,24 @@
 ### About
 `nodejs-auth-starter` is a boilerplate user authentication web app for NodeJS.
 
+![dark-login.png](public/images/dark-login.png)
+![dark-register.png](public/images/dark-register.png)
+
 ## Security
 Includes basic support for JWT, CSRF, password hashing, signup/login pages, password reset, username editing and more.
 
 ### Features
 
-- **SQLite Database:** `better-sqlite3` for user data persistence
-- **JWT Authentication:** Token-based secure authentication
-- **Mandatory 2FA:** Email-based verification system
-- **Security Headers:** Helmet.js for CSRF and HTTP security
-- **Asset Bundling:** Webpack 5 for client-side optimization
-- **Template Engine:** EJS for server-side rendering
-- **Dynamic UI:** Responsive layout with theme switching
-- **State Management:** Real-time updates without frameworks
-- **User Dashboard:** Profile and account management
-- **Rate Limiting:** Request throttling protection
-
-### Screenshots
-![light-login.png](public/images/light-login.png)
-![light-register.png](public/images/light-register.png)
-![dark-login.png](public/images/dark-login.png)
-![dark-register.png](public/images/dark-register.png)
+- **better-sqlite3** (user data)
+- **JWT-token** (token-based auth)
+- **2FA**
+- **Helmet.js** (CSRF/HTTP)
+- **Webpack**
+- **EJS**
+- **Responsive**
+- **Rate Limiting**
+- **Password Reset**<br>
+  and more...
 
 ### Requirements
 
@@ -36,25 +33,25 @@ Includes basic support for JWT, CSRF, password hashing, signup/login pages, pass
 
 ### Dependencies
 
-| Category | Package | Version | Purpose |
-|----------|---------|---------|----------|
-| **Core** | express | ^4.18.x | Server |
-| | better-sqlite3 | ^11.8.x | SQLite database |
-| | jsonwebtoken | ^9.0.x | JWT authentication |
-| | nodemailer | ^6.9.x | E-mail service |
-| | dotenv | ^16.4.x | .env support |
-| | axios | ^1.6.x | HTTP client (frontend) |
-| **Security** | helmet | ^7.1.x | HTTP headers |
-| | express-rate-limit | ^7.1.x | Rate limiting |
-| | csrf | ^3.1.x | CSRF token protection |
-| | cookie-parser | ^1.4.x | Cookie handling |
-| | crypto (built-in) | N/A | Encryption/hashing |
-| **Validation** | express-validator | ^7.0.x | Input validation |
-| **Frontend** | ejs | ^3.1.x | Template engine |
-| | cors | ^2.8.x | CORS middleware |
-| **Development** | mailhog | N/A | 2FA testing |
-| | webpack | ^5.90.x | Asset bundling |
-| | @babel/core | ^7.23.x | JS transpiling |
+| Category      | Package            | Version   |
+|---------------|--------------------|-----------|
+| **Core**      | express            | ^4.18.x   |
+|               | better-sqlite3     | ^11.8.x   |
+|               | jsonwebtoken       | ^9.0.x    |
+|               | nodemailer         | ^6.9.x    |
+|               | dotenv             | ^16.4.x   |
+|               | axios              | ^1.6.x    |
+| **Security**  | helmet             | ^7.1.x    |
+|               | express-rate-limit | ^7.1.x    |
+|               | csrf               | ^3.1.x    |
+|               | cookie-parser      | ^1.4.x    |
+|               | crypto (built-in)  | N/A       |
+| **Validation**| express-validator  | ^7.0.x    |
+| **Frontend**  | ejs                | ^3.1.x    |
+|               | cors               | ^2.8.x    |
+| **Development**| mailhog           | N/A       |
+|               | webpack            | ^5.90.x   |
+|               | @babel/core        | ^7.23.x   |
 
 ### Database schema
 
@@ -88,6 +85,10 @@ CREATE TABLE IF NOT EXISTS user_history (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 ```
+
+### More screenshots
+![light-register.png](public/images/light-register.png)
+![light-login.png](public/images/light-login.png)
 
 ### API routes
 
