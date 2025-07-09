@@ -1,8 +1,8 @@
 ### About
 `nodejs-auth-starter` is a boilerplate user authentication web app for NodeJS.
 
-![dark-login.png](public/images/dark-login.png)
 ![dark-register.png](public/images/dark-register.png)
+![dark-login.png](public/images/dark-login.png)
 
 ## Security
 Includes basic support for JWT, CSRF, password hashing, signup/login pages, password reset, username editing and more.
