@@ -17,8 +17,8 @@ Includes basic support for JWT, CSRF, password hashing, signup/login pages, pass
 - **EJS**
 - **Responsive**
 - **Rate Limiting**
-- **Light/Dark toggle**
-- **Password Reset**<br>
+- **Password Reset**
+- **Light/Dark toggle**<br>
   and more...
 
 ### Requirements
